@@ -1,0 +1,12 @@
+### IDE Files ###
+.idea
+*.iml
+.vscode
+
+### Build artifacts ###
+/dist
+
+### NPM files ###
+/node_modules
+npm-debug.log
+.npmrc
