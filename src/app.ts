@@ -5,13 +5,16 @@ import * as passport from 'passport'
 import * as mongoose from 'mongoose'
 import * as mongo from 'connect-mongo';
 import * as lusca from 'lusca';
+import * as morgan from 'morgan';
 import { routerInit } from './router';
 import { config } from '../config';
 import { MONGODB_URI, SESSION_SECRET } from './util/secret';
+import {stream} from 'winston';
 // import flash from "express-flash";
 
 // API keys and Passport configuration
-import('../config/passport');
+import('../config/winston');
+import('./passport');
 
 const MongoStore = mongo(session);
 const isProduction = process.env.NODE_ENV === 'production';
@@ -37,7 +40,7 @@ class App {
 
     this.express.use(require('cors')(corsOptions));
     this.bodyParserRun();
-    this.express.use(require('morgan')('dev'));
+    this.express.use(morgan('combined'));
     this.express.use(require('method-override')());
     if (!isProduction) {
       this.express.use(require('errorhandler')());
