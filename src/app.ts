@@ -16,7 +16,7 @@ import {stream} from 'winston';
 import('../config/winston');
 import('./passport');
 
-const MongoStore = mongo(session);
+// const MongoStore = mongo(session);
 const isProduction = process.env.NODE_ENV === 'production';
 const mongoUrl = MONGODB_URI;
 
@@ -46,7 +46,7 @@ class App {
       this.express.use(require('errorhandler')());
     }
     this.connectDB();
-    this.setSessionSettings();
+    this.passportInit();
     this.securityRun();
     this.mountRoutes();
   }
@@ -69,18 +69,18 @@ class App {
     }
   }
 
-  private setSessionSettings() {
-    this.express.use(session({
-      resave: true,
-      saveUninitialized: false,
-      secret: SESSION_SECRET,
-      store: new MongoStore({
-        url: mongoUrl,
-        autoReconnect: true
-      })
-    }));
+  private passportInit() {
+    // this.express.use(session({
+    //   resave: true,
+    //   saveUninitialized: false,
+    //   secret: SESSION_SECRET,
+    //   store: new MongoStore({
+    //     url: mongoUrl,
+    //     autoReconnect: true
+    //   })
+    // }));
     this.express.use(passport.initialize());
-    this.express.use(passport.session());
+    // this.express.use(passport.session());
   }
 
   private securityRun() {
