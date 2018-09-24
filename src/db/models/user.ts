@@ -8,6 +8,7 @@ export interface IUser {
   lastName?: string;
   createdAt: Date,
   password: string;
+  refreshTokenMap: Object;
 }
 
 export interface IUserModel extends IUser, Document {
@@ -21,7 +22,8 @@ export var UserSchema: Schema = new Schema({
   firstName: String,
   username: String,
   lastName: String,
-  password: String
+  password: String,
+  refreshTokenMap: Object
 });
 
 UserSchema.pre<IUserModel>('save', async function(next) {

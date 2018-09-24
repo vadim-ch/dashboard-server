@@ -1,4 +1,4 @@
-import {logout, signin, signup} from '../../controllers/auth';
+import { logout, refreshToken, signin, signup } from '../../controllers/auth';
 import {getUser, putUser} from '../../controllers/user';
 
 export const routerUsers = (router) => {
@@ -7,5 +7,6 @@ export const routerUsers = (router) => {
     router.post('/login', ...signin);
     router.post('/register', ...signup);
     router.post('/logout', ...logout);
+    router.post('/refresh-token', ...refreshToken);
     return router;
 };
