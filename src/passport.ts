@@ -2,8 +2,9 @@ import * as passport from 'passport';
 import * as passportLocal from 'passport-local';
 import * as passportJWT from 'passport-jwt';
 import {hash, compare} from 'bcrypt';
-import {User} from './models/user';
+import {User} from './db/models/user';
 import {SESSION_SECRET} from "./util/secret";
+import {JwtOptions} from "./util/token-generator";
 
 const LocalStrategy = passportLocal.Strategy;
 const JWTStrategy = passportJWT.Strategy;
@@ -48,11 +49,8 @@ passport.use(new LocalStrategy({usernameField}, (email, password, done) => {
 
 const jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
 const secretOrKey = SESSION_SECRET;
-export const jsonWebTokenOptions = {
-    expiresIn: 30
-};
 
-passport.use(new JWTStrategy({jwtFromRequest, secretOrKey, jsonWebTokenOptions}, async (jwtPayload, done) => {
+passport.use(new JWTStrategy({jwtFromRequest, secretOrKey, jsonWebTokenOptions: JwtOptions}, async (jwtPayload, done) => {
     //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
     try {
         const user = await User.findById(jwtPayload.id);

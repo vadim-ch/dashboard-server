@@ -6,7 +6,7 @@ import * as mongoose from 'mongoose'
 import * as mongo from 'connect-mongo';
 import * as lusca from 'lusca';
 import * as morgan from 'morgan';
-import { routerInit } from './router';
+import { routerInit } from './routes';
 import { config } from '../config';
 import { MONGODB_URI, SESSION_SECRET } from './util/secret';
 import {stream} from 'winston';
