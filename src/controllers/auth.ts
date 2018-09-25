@@ -56,7 +56,6 @@ const signupController = async (req: Request, res: Response, next: (data?: any) 
     try {
       req.login(user, {session: false}, userLoginHandler(user, req, res, next));
     } catch (err) {
-      logger.error(err);
       return res.status(422).json({errors: 'New user login fail'});
     }
     await user.save();
@@ -70,11 +69,12 @@ const signupController = async (req: Request, res: Response, next: (data?: any) 
 
 export const signinController = (req: Request, res: Response, next: (data?: any) => void) => {
   // req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
-
   passport.authenticate('local', {session: false}, (err, user, info) => {
     if (err) {
       return res.status(422).json({errors: err});
     }
+    console.error('err', err);
+    console.error('user', user);
     if (user) {
       req.login(user, {session: false}, userLoginHandler(user, req, res, next));
     } else {
@@ -83,9 +83,9 @@ export const signinController = (req: Request, res: Response, next: (data?: any)
   })(req, res, next);
 };
 
-export const logoutController = async (req, res, next) => {
+export const logoutController = async(req, res, next) => {
   await req.logout();
-  return res.status(200);
+  return res.json({message: 'User is logged out'});
 };
 
 export const refreshTokenController = async (req, res, next) => {
@@ -94,6 +94,7 @@ export const refreshTokenController = async (req, res, next) => {
   if (!user) {
     throw new Error('user is not defined');
   }
+  await tokenGenerator.verifyToken(req.body.refreshToken);
   if (user.refreshTokenMap[req.body.refreshToken]) {
     delete user.refreshTokenMap[req.body.refreshToken];
     const preparedUser = {

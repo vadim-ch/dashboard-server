@@ -87,6 +87,10 @@ export class TokenGenerator {
         // .then(result => `${timestamp}::${result}`)
         .catch(error => { throw new Error(error) });
   }
+
+  public verifyToken(token): Promise<string> {
+    return jwtService.verify(token, SESSION_SECRET) as Promise<string>;
+  }
 }
 
 export const tokenGenerator = new TokenGenerator(
