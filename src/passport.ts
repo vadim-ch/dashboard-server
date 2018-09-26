@@ -49,17 +49,17 @@ passport.use(new LocalStrategy({usernameField}, (email, password, done) => {
 const jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
 const secretOrKey = SESSION_SECRET;
 
-passport.use(new JWTStrategy({jwtFromRequest, secretOrKey, jsonWebTokenOptions: JwtAccessOptions}, async (jwtPayload, done) => {
-    //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
-    try {
-        const user = await User.findById(jwtPayload.sub);
-        // User not found
-        if (!user) {
-            console.log('User not found');
-            return done(null, false)
-        }
-        return done(null, user);
-    } catch (err) {
-        return done(err);
-    }
-}));
+// passport.use(new JWTStrategy({jwtFromRequest, secretOrKey, jsonWebTokenOptions: JwtAccessOptions}, async (jwtPayload, done) => {
+//     //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
+//     try {
+//         const user = await User.findById(jwtPayload.sub);
+//         // User not found
+//         if (!user) {
+//             console.log('User not found');
+//             return done(null, false)
+//         }
+//         return done(null, user);
+//     } catch (err) {
+//         return done(err);
+//     }
+// }));

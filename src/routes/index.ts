@@ -2,16 +2,11 @@ import * as express from 'express'
 import { routerUsers } from './api/users';
 import { getAllExperts } from '../controllers/user';
 import { logout, refreshToken, signin, signup } from '../controllers/auth';
+const router = express.Router();
 
 export const routerInit = () => {
-  const router = express.Router();
-  // router.get('/', (req, res) => {
-  //   res.json({
-  //     message: 'Hello World!'
-  //   });
-  // });
 
-  router.use('/user', routerUsers(router));
+  router.use('/user', routerUsers());
 
   // auth
   router.post('/auth/login', ...signin);

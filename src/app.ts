@@ -49,6 +49,11 @@ class App {
     this.passportInit();
     this.securityRun();
     this.mountRoutes();
+    this.express.use((err, req, res, next) => {
+      if (err.name === 'UnauthorizedError') {
+        res.status(401).json({errors: 'Error: invalid token'});
+      }
+    });
   }
 
   private bodyParserRun() {

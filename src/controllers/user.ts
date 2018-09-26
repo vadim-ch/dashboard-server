@@ -19,7 +19,7 @@ const getUserController = async (req: Request, res: Response, next: (data?: any)
       username: user.username,
       email: user.email,
       id: user._id.toString(),
-      role: ''
+      role: user.role
     };
     return res.json({...preparedUser});
   } catch (err) {
@@ -36,12 +36,12 @@ const putUserController = async (req: Request, res: Response, next: (data?: any)
     }
 
     // only update fields that were actually passed...
-    if (typeof req.body.user.username !== 'undefined') {
-      user.username = req.body.user.username;
+    if (req.body.username) {
+      user.username = req.body.username;
     }
-    if (typeof req.body.user.email !== 'undefined') {
-      user.email = req.body.user.email;
-    }
+    // if (req.body.email) {
+    //   user.email = req.body.email;
+    // }
     // if(typeof req.body.user.bio !== 'undefined'){
     //   user.bio = req.body.user.bio;
     // }
@@ -53,12 +53,13 @@ const putUserController = async (req: Request, res: Response, next: (data?: any)
     // }
 
     await user.save();
-    return res.status(200).json({
-      response: {
-        ...user,
-        id: user._id
-      }
-    });
+    const preparedUser = {
+      username: user.username,
+      email: user.email,
+      id: user._id.toString(),
+      role: user.role
+    };
+    return res.json({...preparedUser});
   } catch (err) {
     next(err);
   }

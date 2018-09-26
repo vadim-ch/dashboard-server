@@ -1,8 +1,10 @@
-import { logout, refreshToken, signin, signup } from '../../controllers/auth';
+import * as express from 'express'
 import { getAllExperts, getUser, putUser } from '../../controllers/user';
+const router = express.Router();
 
-export const routerUsers = (router) => {
-    router.get('/user/:id', ...getUser);
-    router.put('/user/:id', ...putUser);
+export const routerUsers = () => {
+    router.get('/:id', ...getUser);
+    router.put('/:id', ...putUser);
+    // router.delete('/:id', );
     return router;
 };
