@@ -1,6 +1,12 @@
 import { hash, compare } from 'bcrypt';
 import { Document, Schema, Model, model, Error } from 'mongoose';
 
+export const UserRole = {
+  Client: 'client',
+  Expert: 'expert',
+  Admin: 'admin'
+};
+
 export interface IUser {
   email?: string;
   username?: string;
@@ -8,7 +14,8 @@ export interface IUser {
   lastName?: string;
   createdAt: Date,
   password: string;
-  refreshTokenMap: Object;
+  refreshTokenMap: object;
+  role: string;
 }
 
 export interface IUserModel extends IUser, Document {
@@ -23,7 +30,8 @@ export var UserSchema: Schema = new Schema({
   username: String,
   lastName: String,
   password: String,
-  refreshTokenMap: Object
+  refreshTokenMap: Object,
+  role: String
 });
 
 UserSchema.pre<IUserModel>('save', async function(next) {

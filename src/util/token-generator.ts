@@ -1,6 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { SESSION_SECRET } from './secret';
 import * as jwtService from '../services/jwt-service';
+import * as uuidv1 from 'uuid/v1';
 import { config } from '../../config';
 
 // export const JwtAccessOptions = {
@@ -54,19 +55,24 @@ export class TokenGenerator {
     return jwtService.sign(payload, SESSION_SECRET, options);
   }
 
-  public makeRefreshToken(userEntity: UserEntityType): Promise<string> {
-    const timestamp = new Date().getTime();
+  public makeRefreshToken(userEntity: UserEntityType): Promise<Array<string>> {
     const payload = {
       tokenType: config.token.refresh.type,
       email: userEntity.email
     };
+    const jwtid = uuidv1();
     const options = {
       ...JwtRefreshOptions,
       subject: userEntity.id,
+      jwtid
     };
     return jwtService.sign(payload, SESSION_SECRET, options)
-        // .then(result => `${timestamp}::${result}`)
-        .catch(error => { throw new Error(error) });
+        .then(refreshToken => {
+          return [refreshToken, jwtid];
+        })
+        .catch(error => {
+          throw new Error(error)
+        });
   }
 
   public verifyToken(token): Promise<string> {

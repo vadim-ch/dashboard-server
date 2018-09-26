@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { check } from 'express-validator/check';
 import { logger } from '../../config/winston';
-import { User } from '../db/models/user';
+import { User, UserRole } from '../db/models/user';
 import { isAuthenticated, validateMiddleware } from '../routes/middlewares';
 import { tokenGenerator } from "../util/token-generator";
 import * as passport from 'passport'
@@ -19,7 +19,7 @@ const validateSignupFields = [
 ];
 
 const userLoginHandler = (user, req, res, next) => {
-  return async(err) => {
+  return async (err) => {
     if (err) {
       return next(err);
     }
@@ -27,14 +27,14 @@ const userLoginHandler = (user, req, res, next) => {
       username: user.username,
       email: user.email,
       id: user._id.toString(),
-      role: ''
+      role: user.role
     };
     const accessToken = await tokenGenerator.makeAccessToken(preparedUser);
-    const refreshToken = await tokenGenerator.makeRefreshToken(preparedUser);
+    const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(preparedUser);
     user.refreshTokenMap = {
-      [refreshToken]: refreshToken
+      [refreshUuid]: refreshToken
     };
-    user.save();
+    await user.save();
     return res.status(200).json({
       accessToken,
       refreshToken
@@ -51,14 +51,15 @@ const signupController = async (req: Request, res: Response, next: (data?: any) 
     const user = new User({
       username: req.body.username,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
+      role: UserRole.Admin
     });
     try {
       req.login(user, {session: false}, userLoginHandler(user, req, res, next));
     } catch (err) {
       return res.status(422).json({errors: 'New user login fail'});
     }
-    await user.save();
+    // await user.save();
   } catch (err) {
     if (err) {
       logger.error(err);
@@ -73,8 +74,6 @@ export const signinController = (req: Request, res: Response, next: (data?: any)
     if (err) {
       return res.status(422).json({errors: err});
     }
-    console.error('err', err);
-    console.error('user', user);
     if (user) {
       req.login(user, {session: false}, userLoginHandler(user, req, res, next));
     } else {
@@ -83,7 +82,7 @@ export const signinController = (req: Request, res: Response, next: (data?: any)
   })(req, res, next);
 };
 
-export const logoutController = async(req, res, next) => {
+export const logoutController = async (req, res, next) => {
   await req.logout();
   return res.json({message: 'User is logged out'});
 };
@@ -94,19 +93,20 @@ export const refreshTokenController = async (req, res, next) => {
   if (!user) {
     throw new Error('user is not defined');
   }
-  await tokenGenerator.verifyToken(req.body.refreshToken);
-  if (user.refreshTokenMap[req.body.refreshToken]) {
+  const decodedRefreshToken = await tokenGenerator.verifyToken(req.body.refreshToken);
+
+  if (user.refreshTokenMap[decodedRefreshToken['jwtid']]) {
     delete user.refreshTokenMap[req.body.refreshToken];
     const preparedUser = {
       username: user.username,
       email: user.email,
       id: user._id.toString(),
-      role: ''
+      role: user.role
     };
     const newAccessToken = await tokenGenerator.makeAccessToken(preparedUser);
-    const newRefreshToken = await tokenGenerator.makeRefreshToken(preparedUser);
+    const [newRefreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(preparedUser);
     user.refreshTokenMap = {
-      [newRefreshToken]: newRefreshToken
+      [refreshUuid]: newRefreshToken
     };
     await user.save();
     return res.status(200).json({

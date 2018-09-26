@@ -5,6 +5,7 @@ import * as passport from 'passport'
 export const validateMiddleware = (req: Request, res: Response, next: () => void) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.error('Validare error', req);
         return res.status(422).json({errors: errors.array()});
     }
     next();

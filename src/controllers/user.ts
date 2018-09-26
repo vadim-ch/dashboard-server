@@ -1,6 +1,6 @@
-import { isAuthenticated } from '../routes/middlewares';
+import { isAuthenticated, validateMiddleware } from '../routes/middlewares';
 import { Request, Response } from 'express';
-import { User } from '../db/models/user';
+import { User, UserRole } from '../db/models/user';
 import { logger } from '../../config/winston';
 // import {Error} from 'mongoose';
 import { param, validationResult } from 'express-validator/check';
@@ -10,10 +10,6 @@ const validateField = [
 ];
 
 const getUserController = async (req: Request, res: Response, next: (data?: any) => void) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({errors: errors.array()});
-  }
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -68,13 +64,37 @@ const putUserController = async (req: Request, res: Response, next: (data?: any)
   }
 };
 
+const getAllExpertsController = async (req: Request, res: Response, next: (data?: any) => void) => {
+  try {
+    const allExperts = await User.find({role: UserRole.Expert});
+    return res.json(allExperts.map(user => {
+      return {
+        username: user.username,
+        email: user.email,
+        id: user._id.toString(),
+        role: user.role
+      };
+    }));
+  } catch (err) {
+    logger.error(err);
+    return res.status(422).json({error: err});
+  }
+};
+
+
 export const getUser = [
-  validateField,
   isAuthenticated,
+  validateField,
+  validateMiddleware,
   getUserController
 ];
 
 export const putUser = [
   isAuthenticated,
   putUserController
+];
+
+export const getAllExperts = [
+  isAuthenticated,
+  getAllExpertsController
 ];
