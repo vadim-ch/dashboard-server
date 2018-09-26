@@ -15,13 +15,13 @@ const JwtCommonOptions = {
 export const JwtAccessOptions = {
   ...JwtCommonOptions,
   expiresIn: config.token.access.expiresIn,
-  notBefore: '2s'
+  // notBefore: '2s'
 };
 
 export const JwtRefreshOptions = {
   ...JwtCommonOptions,
   expiresIn: config.token.refresh.expiresIn,
-  notBefore: '2s'
+  // notBefore: '2s'
 };
 
 export type UserEntityType = {
@@ -40,25 +40,6 @@ export class TokenGenerator {
     this.secretOrPublicKey = secretOrPublicKey;
   }
 
-  public sign(payload, signOptions?: object) {
-    const jwtSignOptions = {
-      ...signOptions,
-      ...JwtAccessOptions
-    };
-    return jwt.sign(payload, this.secretOrPrivateKey, jwtSignOptions);
-  }
-
-  public refresh(token, refreshOptions?: object) {
-    // const payload = jwt.verify(token, this.secretOrPublicKey, refreshOptions.verify);
-    // delete payload.iat;
-    // delete payload.exp;
-    // delete payload.nbf;
-    // delete payload.jti; //We are generating a new token, if you are using jwtid during signing, pass it in refreshOptions
-    // const jwtSignOptions = Object.assign({}, this.options, {jwtid: refreshOptions.jwtid});
-    // // The first signing converted all needed options into claims, they are already in the payload
-    // return jwt.sign(payload, this.secretOrPrivateKey, jwtSignOptions);
-  }
-
   public makeAccessToken(userEntity: UserEntityType): Promise<string> {
     const payload = {
       tokenType: config.token.access.type,
@@ -67,7 +48,7 @@ export class TokenGenerator {
       email: userEntity.email
     };
     const options = {
-      ...JwtRefreshOptions,
+      ...JwtAccessOptions,
       subject: userEntity.id,
     };
     return jwtService.sign(payload, SESSION_SECRET, options);

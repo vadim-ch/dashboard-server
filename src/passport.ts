@@ -55,7 +55,7 @@ passport.use(new JWTStrategy({jwtFromRequest, secretOrKey, jsonWebTokenOptions: 
         const user = await User.findById(jwtPayload.sub);
         // User not found
         if (!user) {
-            console.log('User not found11');
+            console.log('User not found');
             return done(null, false)
         }
         return done(null, user);
