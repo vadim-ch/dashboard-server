@@ -1,8 +1,8 @@
 import {Request, Response} from 'express';
 import {validationResult} from 'express-validator/check';
-import * as passport from 'passport'
 import * as expressJwt from 'express-jwt'
 import { SESSION_SECRET } from '../../util/secret';
+import {MongoError} from "mongodb";
 
 export const validateMiddleware = (req: Request, res: Response, next: () => void) => {
     const errors = validationResult(req);
@@ -16,3 +16,18 @@ export const validateMiddleware = (req: Request, res: Response, next: () => void
 export const isAuthenticated = expressJwt({secret: SESSION_SECRET});
 // export const isAuthenticated = passport.authenticate('jwt', {session: false});
 
+export const unauthorizedHandlerError = (err, req: Request, res: Response, next: () => void) => {
+    if (err.name === 'UnauthorizedError') {
+        res.status(401).json({errors: 'Error: invalid token'});
+    }
+};
+
+export const dbHandlerError = (err, req: Request, res: Response, next: (data: any) => void) => {
+    if (err instanceof MongoError) {
+        return res.status(503).json({
+            type: 'MongoError',
+            message: err.message
+        });
+    }
+    next(err);
+};

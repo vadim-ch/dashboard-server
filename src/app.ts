@@ -10,6 +10,7 @@ import { routerInit } from './routes';
 import { config } from '../config';
 import { MONGODB_URI, SESSION_SECRET } from './util/secret';
 import {stream} from 'winston';
+import {dbHandlerError, unauthorizedHandlerError} from "./routes/middlewares";
 // import flash from "express-flash";
 
 // API keys and Passport configuration
@@ -49,11 +50,8 @@ class App {
     this.passportInit();
     this.securityRun();
     this.mountRoutes();
-    this.express.use((err, req, res, next) => {
-      if (err.name === 'UnauthorizedError') {
-        res.status(401).json({errors: 'Error: invalid token'});
-      }
-    });
+    this.express.use(unauthorizedHandlerError);
+    this.express.use(dbHandlerError);
   }
 
   private bodyParserRun() {
