@@ -1,4 +1,4 @@
-import { isAuthenticated, validateMiddleware } from '../routes/middlewares';
+import { isAuthenticated, userRolesMiddleware, validateMiddleware } from '../routes/middlewares';
 import { Request, Response } from 'express';
 import { User, UserRole } from '../db/models/user';
 import { logger } from '../../config/winston';
@@ -92,10 +92,11 @@ export const getUser = [
 
 export const putUser = [
   isAuthenticated,
+  userRolesMiddleware,
   putUserController
 ];
 
 export const getAllExperts = [
-  isAuthenticated,
+  // isAuthenticated,
   getAllExpertsController
 ];

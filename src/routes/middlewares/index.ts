@@ -16,6 +16,15 @@ export const validateMiddleware = (req: Request, res: Response, next: () => void
 export const isAuthenticated = expressJwt({secret: SESSION_SECRET});
 // export const isAuthenticated = passport.authenticate('jwt', {session: false});
 
+export const userRolesMiddleware = (req: Request, res: Response, next: () => void) => {
+  if (req.user.sub !== req.params.id) {
+    return res.status(403).json({errors: 'not owned by user'});
+  }
+  next();
+};
+
+// error Handlers
+
 export const unauthorizedHandlerError = (err, req: Request, res: Response, next: () => void) => {
     if (err.name === 'UnauthorizedError') {
         res.status(401).json({errors: 'Error: invalid token'});
