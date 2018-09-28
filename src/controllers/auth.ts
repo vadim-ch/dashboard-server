@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { check } from 'express-validator/check';
-import { logger } from '../../config/winston';
 import { User, UserRole } from '../db/models/user';
 import { isAuthenticated, validateMiddleware } from '../routes/middlewares';
 import { tokenGenerator } from "../util/token-generator";
@@ -62,7 +61,6 @@ const signupController = async (req: Request, res: Response, next: (data?: any) 
     // await user.save();
   } catch (err) {
     if (err) {
-      logger.error(err);
       return res.status(422).json({errors: err});
     }
   }

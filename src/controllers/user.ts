@@ -1,7 +1,6 @@
 import { isAuthenticated, userRolesMiddleware, validateMiddleware } from '../routes/middlewares';
 import { Request, Response } from 'express';
 import { User, UserRole } from '../db/models/user';
-import { logger } from '../../config/winston';
 // import {Error} from 'mongoose';
 import { param, validationResult } from 'express-validator/check';
 
