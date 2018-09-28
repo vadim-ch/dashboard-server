@@ -1,65 +1,41 @@
 import * as passport from 'passport';
 import * as passportLocal from 'passport-local';
-import * as passportJWT from 'passport-jwt';
-import {User} from './db/models/user';
-import {SESSION_SECRET} from "./util/secret";
-import {JwtAccessOptions} from "./util/token-generator";
+import { usersStore } from './domain/users/store';
+import { logger } from './logger';
+// import {User} from './db/models/user';
 
 const LocalStrategy = passportLocal.Strategy;
-const JWTStrategy = passportJWT.Strategy;
-const ExtractJWT = passportJWT.ExtractJwt;
 
 
 passport.serializeUser((user: any, done) => {
-    done(null, user.id);
+  done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-        done(err, user);
-    });
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await usersStore.getUserById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
 });
 
 const usernameField = 'email';
-passport.use(new LocalStrategy({usernameField}, (email, password, done) => {
-    User.findOne({email: email.toLowerCase()}, async (err, user) => {
-        if (err) {
-            return done(err)
-        }
-
-        // User not found
-        if (!user) {
-            console.log('User not found')
-            return done(null, false)
-        }
-
-        try {
-            const isMatch = await user.comparePassword(password);
-            if (isMatch) {
-                return done(null, user);
-            } else {
-                return done(null, false);
-            }
-        } catch (err) {
-            return done(err);
-        }
-    });
+passport.use(new LocalStrategy({usernameField}, async (email, password, done) => {
+  try {
+    const user = await usersStore.getUserByEmail(email.toLowerCase());
+    // User not found
+    if (!user) {
+      logger.info(`User ${email} not found`);
+      return done(null, false)
+    }
+    const isMatch = await user.comparePassword(password);
+    if (isMatch) {
+      return done(null, user);
+    } else {
+      return done(null, false);
+    }
+  } catch (err) {
+    return done(err);
+  }
 }));
-
-const jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
-const secretOrKey = SESSION_SECRET;
-
-// passport.use(new JWTStrategy({jwtFromRequest, secretOrKey, jsonWebTokenOptions: JwtAccessOptions}, async (jwtPayload, done) => {
-//     //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
-//     try {
-//         const user = await User.findById(jwtPayload.sub);
-//         // User not found
-//         if (!user) {
-//             console.log('User not found');
-//             return done(null, false)
-//         }
-//         return done(null, user);
-//     } catch (err) {
-//         return done(err);
-//     }
-// }));

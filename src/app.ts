@@ -46,28 +46,28 @@ class App {
         // if (!isProduction) {
         //     this.express.use(require('errorhandler')());
         // }
-        // this.connectDB();
+        // this.connectDatabase();
 
         this.passportInit();
 
         // this.securityRun();
-        // this.mountRoutes();
+        this.mountRoutes();
         // this.express.use(unauthorizedHandlerError);
         // this.express.use(dbHandlerError);
 
 
     }
 
-    private bodyParserRun() {
-        this.express.use(bodyParser.urlencoded({extended: true}));
-        this.express.use(bodyParser.json());
-    }
+    // private bodyParserRun() {
+    //     this.express.use(bodyParser.urlencoded({extended: true}));
+    //     this.express.use(bodyParser.json());
+    // }
 
     private mountRoutes(): void {
         this.express.use('/api', routerInit());
     }
 
-    // private connectDB() {
+    // private connectDatabase() {
     //     if (isProduction) {
     //         mongoose.connect(MONGODB_URI);
     //     } else {
@@ -80,10 +80,10 @@ class App {
         this.express.use(passport.initialize());
     }
 
-    private securityRun() {
-        this.express.use(lusca.xframe("SAMEORIGIN"));
-        this.express.use(lusca.xssProtection(true));
-    }
+    // private securityRun() {
+    //     this.express.use(lusca.xframe("SAMEORIGIN"));
+    //     this.express.use(lusca.xssProtection(true));
+    // }
 }
 
 const HOSTNAME = process.env.SERVER_HOST || `localhost`;

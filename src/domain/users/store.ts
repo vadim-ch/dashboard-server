@@ -1,31 +1,97 @@
-import {connectDB} from '../../db';
-import {logger} from '../logger';
+import { connectDatabase } from '../../db';
+import { logger } from '../../logger';
+import { Document, Model, model, Schema } from "mongoose";
+import { compare, hash } from 'bcrypt';
 
-const setupCollection = async () => {
-    const dBase = await connectDB;
+const COLLECTION_NAME = 'User';
 
-    const collection = dBase.collection(`wizards`);
-    collection.createIndex({username: -1}, {unique: true});
-    return collection;
+export var UserSchema: Schema = new Schema({
+  createdAt: Date,
+  email: String,
+  firstName: String,
+  username: String,
+  lastName: String,
+  password: String,
+  refreshTokenMap: Object,
+  role: String
+});
+
+UserSchema.pre<IUserModel>('save', async function (next) {
+  const user = this;
+  let now = new Date();
+  if (!user.createdAt) {
+    user.createdAt = now;
+  }
+  if (!user.isModified('password')) {
+    return next();
+  }
+  user.password = await hash(user.password, 12);
+  next();
+});
+
+UserSchema.methods.comparePassword = async function (candidatePassword): Promise<boolean> {
+  const user = this;
+  return await compare(candidatePassword, user.password);
 };
 
+const setupCollection = async () => {
+  const dBase = await connectDatabase;
+  return model<IUserModel>(COLLECTION_NAME, UserSchema);
+};
+
+export const UserRole = {
+  Client: 'client',
+  Expert: 'expert',
+  Admin: 'admin'
+};
+
+export interface IUser {
+  email?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  createdAt: Date,
+  password: string;
+  refreshTokenMap: object;
+  role: string;
+}
+
+export interface IUserModel extends IUser, Document {
+  fullName(): string;
+
+  comparePassword(password: string): Promise<boolean>;
+}
+
 class UsersStore {
-    constructor(collection) {
-        this.collection = collection;
-    }
+  private userModel: Promise<Model<IUserModel>>;
 
-    async getUser(username) {
-        return (await this.collection).findOne({username});
-    }
+  constructor(userModel) {
+    this.userModel = userModel;
+  }
 
-    async getAllUsers() {
-        return (await this.collection).find();
-    }
+  async getUserById(id): Promise<IUserModel> {
+    return (await this.userModel).findById(id);
+  }
 
-    async save(wizardData) {
-        return (await this.collection).insertOne(wizardData);
-    }
+  async getUserByEmail(email): Promise<IUserModel> {
+    return (await this.userModel).findOne({email});
+  }
+
+  async getAllUsers() {
+    const users = await (await this.userModel).find();
+    return users.map(user => {
+      email: user.email
+    })
+  }
+
+  async save(userData: IUser) {
+    // return (await this.userModel).insertOne(userData);
+  }
 
 }
 
-export const usersStore = new UsersStore(setupCollection().catch((e) => logger.error(`Failed to set up 'wizards'-collection`, e)));
+export const usersStore =
+    new UsersStore(
+        setupCollection()
+            .catch((e) => logger.error(`Failed to set up '${COLLECTION_NAME}'-collection`, e))
+    );

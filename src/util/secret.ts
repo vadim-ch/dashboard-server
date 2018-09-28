@@ -8,7 +8,7 @@ if (!SESSION_SECRET) {
   process.exit(1);
 }
 
-if (!MONGODB_URI) {
-  console.error("No mongo connection string. Set MONGODB_URI environment variable.");
-  process.exit(1);
-}
+// if (!MONGODB_URI) {
+//   console.error("No mongo connection string. Set MONGODB_URI environment variable.");
+//   process.exit(1);
+// }
