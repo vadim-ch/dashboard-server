@@ -1,10 +1,19 @@
 import * as express from 'express'
-import { getAllExperts, getUser, putUser } from '../../controllers/user';
-const router = express.Router();
+import { getAllExperts, getAllUsers, getUser, putUser } from '../../controllers/user';
+import { renderException } from '../../util/data-render';
+
+const userRouter = express.Router();
 
 export const routerUsers = () => {
-    router.get('/:id', ...getUser);
-    router.put('/:id', ...putUser);
-    // router.delete('/:id', );
-    return router;
+  userRouter.get('', ...getAllUsers);
+  userRouter.get('/:id', ...getUser);
+  userRouter.put('/:id', ...putUser);
+  // router.delete('/:id', );
+
+  userRouter.use((exception, req, res, next) => {
+    renderException(req, res, exception);
+    next();
+  });
+
+  return userRouter;
 };

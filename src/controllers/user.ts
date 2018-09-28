@@ -1,90 +1,53 @@
 import { isAuthenticated, userRolesMiddleware, validateMiddleware } from '../routes/middlewares';
 import { Request, Response } from 'express';
-import { User, UserRole } from '../db/models/user';
-import { logger } from '../../config/winston';
-// import {Error} from 'mongoose';
-import { param, validationResult } from 'express-validator/check';
+import { param } from 'express-validator/check';
+import { asyncHandler } from '../util/async-handler';
+import { NotFoundError } from '../errors/not-found-error';
+import { renderDataSuccess } from '../util/data-render';
+import { userStore, UserUpdateFields } from '../store/users';
 
 const validateField = [
   param('id').isString().isBase64().isLength({min: 5}),
 ];
 
-const getUserController = async (req: Request, res: Response, next: (data?: any) => void) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      throw new Error('user is not defined');
-    }
-    const preparedUser = {
-      username: user.username,
-      email: user.email,
-      id: user._id.toString(),
-      role: user.role
-    };
-    return res.json({...preparedUser});
-  } catch (err) {
-    logger.error(err);
-    return res.status(422).json({error: err});
+const getUserController = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.params.id;
+  const user = await userStore.getUserById(userId);
+  if (!user) {
+    throw new NotFoundError(`User "${userId}" not found`);
   }
-};
+  renderDataSuccess(req, res, user);
+});
 
-const putUserController = async (req: Request, res: Response, next: (data?: any) => void) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(401);
-    }
-
-    // only update fields that were actually passed...
-    if (req.body.username) {
-      user.username = req.body.username;
-    }
-    // if (req.body.email) {
-    //   user.email = req.body.email;
-    // }
-    // if(typeof req.body.user.bio !== 'undefined'){
-    //   user.bio = req.body.user.bio;
-    // }
-    // if(typeof req.body.user.image !== 'undefined'){
-    //   user.image = req.body.user.image;
-    // }
-    // if(typeof req.body.user.password !== 'undefined'){
-    //   user.setPassword(req.body.user.password);
-    // }
-
-    await user.save();
-    const preparedUser = {
-      username: user.username,
-      email: user.email,
-      id: user._id.toString(),
-      role: user.role
-    };
-    return res.json({...preparedUser});
-  } catch (err) {
-    next(err);
+const putUserController = asyncHandler(async (req: Request, res: Response, next: (data?: any) => void) => {
+  const userId = req.params.id;
+  let updateData: UserUpdateFields = {};
+  if (req.body.firstName) {
+    updateData.firstName = req.body.firstName;
   }
-};
-
-const getAllExpertsController = async (req: Request, res: Response, next: (data?: any) => void) => {
-  try {
-    const allExperts = await User.find({role: UserRole.Expert});
-    return res.json(allExperts.map(user => {
-      return {
-        username: user.username,
-        email: user.email,
-        id: user._id.toString(),
-        role: user.role
-      };
-    }));
-  } catch (err) {
-    logger.error(err);
-    return res.status(422).json({error: err});
+  if (req.body.lastName) {
+    updateData.lastName = req.body.lastName;
   }
-};
+  const user = await userStore.findAndUpdateUser(userId, updateData);
+  if (!user) {
+    throw new NotFoundError(`User "${userId}" not found`);
+  }
+  renderDataSuccess(req, res, user);
+});
+
+const getAllExpertsController = asyncHandler(async (req: Request, res: Response, next: (data?: any) => void) => {
+  const allExperts = await userStore.getAllExperts();
+  renderDataSuccess(req, res, allExperts);
+});
+
+const getAllUsersController = asyncHandler(async (req: Request, res: Response, next: (data?: any) => void) => {
+  const allExperts = await userStore.getUsers();
+  renderDataSuccess(req, res, allExperts);
+});
 
 
 export const getUser = [
-  isAuthenticated,
+  // isAuthenticated,
   validateField,
   validateMiddleware,
   getUserController
@@ -99,4 +62,10 @@ export const putUser = [
 export const getAllExperts = [
   // isAuthenticated,
   getAllExpertsController
+];
+
+
+export const getAllUsers = [
+  // isAuthenticated,
+  getAllUsersController
 ];

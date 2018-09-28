@@ -1,15 +1,9 @@
 import { hash, compare } from 'bcrypt';
-import { Document, Schema, Model, model, Error } from 'mongoose';
-
-export const UserRole = {
-  Client: 'client',
-  Expert: 'expert',
-  Admin: 'admin'
-};
+import { Document, Schema, Model, model } from 'mongoose';
+import { UserRole } from '../users';
 
 export interface IUser {
-  email?: string;
-  username?: string;
+  email: string;
   firstName?: string;
   lastName?: string;
   createdAt: Date,
@@ -19,7 +13,6 @@ export interface IUser {
 }
 
 export interface IUserModel extends IUser, Document {
-  fullName(): string;
   comparePassword(password: string): Promise<boolean>;
 }
 
@@ -39,6 +32,9 @@ UserSchema.pre<IUserModel>('save', async function(next) {
   let now = new Date();
   if (!user.createdAt) {
     user.createdAt = now;
+  }
+  if (!user.role) {
+    user.role = UserRole.Client;
   }
   if (!user.isModified('password')) {
     return next();

@@ -1,19 +1,17 @@
 import * as express from 'express'
 import { routerUsers } from './api/users';
+import * as passport from 'passport'
+import { authUsers } from './api/auth';
 import { getAllExperts } from '../controllers/user';
-import { logout, refreshToken, signin, signup } from '../controllers/auth';
 const router = express.Router();
+const app = express();
 
 export const routerInit = () => {
+  app.use(require('method-override')());
+  app.use(passport.initialize());
 
-  router.use('/user', routerUsers());
-
-  // auth
-  router.post('/auth/login', ...signin);
-  router.post('/auth/register', ...signup);
-  router.post('/auth/logout', ...logout);
-  router.post('/auth/refresh-token', ...refreshToken);
-
-  router.get('/all-experts', ...getAllExperts);
+  router.get('/experts', ...getAllExperts);
+  router.use('/users', routerUsers());
+  router.use('/auth', authUsers());
   return router;
 };

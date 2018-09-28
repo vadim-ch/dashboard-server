@@ -1,11 +1,14 @@
 import app from './app'
+import { logger } from './logger';
 
-const port = process.env.PORT || 3001;
+const HOSTNAME = process.env.SERVER_HOST || `localhost`;
+const PORT = parseInt(process.env.SERVER_PORT, 10) || 3000;
+const serverAddress = `http://${HOSTNAME}:${PORT}`;
 
-app.listen(port, (err) => {
+app.listen(PORT, HOSTNAME, (err) => {
   if (err) {
-    return console.log(err)
+    return logger.error(err);
   }
 
-  return console.log(`server is listening on ${port}`)
+  logger.info(`Server running at ${serverAddress}/`);
 });

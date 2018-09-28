@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { check } from 'express-validator/check';
-import { logger } from '../../config/winston';
-import { User, UserRole } from '../db/models/user';
+import { User } from '../store/models/user';
 import { isAuthenticated, validateMiddleware } from '../routes/middlewares';
 import { tokenGenerator } from "../util/token-generator";
 import * as passport from 'passport'
 import * as jwt from 'jsonwebtoken';
+import { logger } from '../logger';
+import { asyncHandler } from '../util/async-handler';
+import { userStore, UserType } from '../store/users';
 
 const validateSigninFields = [
   check('email').isEmail(),
@@ -18,7 +20,7 @@ const validateSignupFields = [
   check('username').isLength({min: 2}),
 ];
 
-const userLoginHandler = (user, req, res, next) => {
+const userLoginHandler = (user: UserType, req, res, next) => {
   return async (err) => {
     if (err) {
       return next(err);
@@ -42,33 +44,17 @@ const userLoginHandler = (user, req, res, next) => {
   }
 };
 
-const signupController = async (req: Request, res: Response, next: (data?: any) => void) => {
-  try {
-    const existingUser = await User.findOne({email: req.body.email});
-    if (existingUser) {
-      return res.status(422).json({errors: 'Exist user'});
-    }
-    const user = new User({
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-      role: UserRole.Admin
-    });
-    try {
-      req.login(user, {session: false}, userLoginHandler(user, req, res, next));
-    } catch (err) {
-      return res.status(422).json({errors: 'New user login fail'});
-    }
-    // await user.save();
-  } catch (err) {
-    if (err) {
-      logger.error(err);
-      return res.status(422).json({errors: err});
-    }
-  }
-};
+const signupController = asyncHandler(async (req: Request, res: Response, next: (data?: any) => void) => {
+  const user = userStore.createUser({
+    firstName: req.body.firstName,
+    email: req.body.email,
+    password: req.body.password,
+  });
 
-export const signinController = (req: Request, res: Response, next: (data?: any) => void) => {
+  req.login(user, {session: false}, userLoginHandler(user, req, res, next));
+});
+
+export const signinController = asyncHandler(async (req: Request, res: Response, next: (data?: any) => void) => {
   // req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
   passport.authenticate('local', {session: false}, (err, user, info) => {
     if (err) {
@@ -80,14 +66,14 @@ export const signinController = (req: Request, res: Response, next: (data?: any)
       return res.status(422).json({errors: info});
     }
   })(req, res, next);
-};
+});
 
-export const logoutController = async (req, res, next) => {
+export const logoutController = asyncHandler(async (req, res, next) => {
   await req.logout();
   return res.json({message: 'User is logged out'});
-};
+});
 
-export const refreshTokenController = async (req, res, next) => {
+export const refreshTokenController = asyncHandler(async (req, res, next) => {
   const refreshTokenRequest = jwt.decode(req.body.refreshToken);
   const user = await User.findById(refreshTokenRequest.sub);
   if (!user) {
@@ -98,7 +84,7 @@ export const refreshTokenController = async (req, res, next) => {
   if (user.refreshTokenMap[decodedRefreshToken['jwtid']]) {
     delete user.refreshTokenMap[req.body.refreshToken];
     const preparedUser = {
-      username: user.username,
+      username: '',
       email: user.email,
       id: user._id.toString(),
       role: user.role
@@ -115,7 +101,7 @@ export const refreshTokenController = async (req, res, next) => {
     });
   }
   res.status(422);
-};
+});
 
 export const signup = [
   validateSignupFields,

@@ -12,3 +12,6 @@ npm-debug.log
 .npmrc
 
 /data
+
+combined.log
+error.log
