@@ -2,6 +2,7 @@ import { UnauthorizedError } from 'express-jwt';
 import * as util from 'util';
 
 import { MongoError } from 'mongodb';
+import {AuthError} from "../errors/auth-error";
 // const ValidationError = require('../error/validation-error');
 
 const SUCCESS_CODE = 200;
@@ -69,7 +70,7 @@ export const renderException = (req, res, exception) => {
     switch (exception.code) {
       case 11000:
         data.code = 400;
-        data.errorMessage = `Дубликат`;
+        data.errorMessage = `Dublicate`;
         break;
       default:
         data.code = 501;
@@ -78,6 +79,9 @@ export const renderException = (req, res, exception) => {
   } else if (exception instanceof UnauthorizedError) {
     data.code = 401;
     data.errorMessage = 'Error: invalid token';
-  }
+  } else if (exception instanceof AuthError) {
+        data.code = exception.code;
+        data.errorMessage = exception.errorMessage;
+    }
   render(req, res, data, false);
 };

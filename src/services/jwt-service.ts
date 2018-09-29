@@ -20,7 +20,6 @@ export const sign = (payload: object, SECRET: string, options: object): Promise<
   return new Promise((resolve, reject) => {
     jwt.sign(payload, SECRET, options, (error, token) => {
       if (error) {
-        console.error(error);
         return reject(new ErrorWrapper({...errorCodes.TOKEN_NOT_SIGNED}))
       }
       return resolve(token)

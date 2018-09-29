@@ -6,7 +6,6 @@ import { MongoError } from 'mongodb';
 
 
 export const validateMiddleware = (req: Request, res: Response, next: () => void) => {
-  console.error(req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({errors: errors.array()});

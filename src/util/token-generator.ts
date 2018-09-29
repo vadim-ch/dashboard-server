@@ -27,7 +27,8 @@ export const JwtRefreshOptions = {
 
 export type UserEntityType = {
   id: string;
-  username: string;
+  firstName: string
+  lastName: string
   email: string;
   role: string;
 }
@@ -44,7 +45,8 @@ export class TokenGenerator {
   public makeAccessToken(userEntity: UserEntityType): Promise<string> {
     const payload = {
       tokenType: config.token.access.type,
-      username: userEntity.username,
+      firstName: userEntity.firstName,
+      lastName: userEntity.lastName,
       userRole: userEntity.role,
       email: userEntity.email
     };

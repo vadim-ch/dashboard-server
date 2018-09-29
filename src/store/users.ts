@@ -1,6 +1,7 @@
 import { IUser, IUserModel, User } from './models/user';
 import { Model } from 'mongoose';
 import { MongoError } from 'mongodb';
+import {AuthError} from "../errors/auth-error";
 
 export const UserRole = {
   Client: 'client',
@@ -9,9 +10,9 @@ export const UserRole = {
 };
 
 export interface UserType {
-  id: string,
-  firstName: string
-  lastName: string
+  id: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: string;
 }
@@ -21,9 +22,6 @@ export interface NewUserType {
   lastName?: string;
   email: string;
   password: string;
-  accessToken: string;
-  refreshToken: string;
-  refreshUuid: string;
 }
 
 export type UserUpdateFields = {
@@ -40,7 +38,7 @@ export class UserStore {
 
   static prepareUser(user: IUserModel): UserType {
     return {
-      id: user._id,
+      id: user._id.toString(),
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
@@ -53,18 +51,18 @@ export class UserStore {
     return UserStore.prepareUser(user);
   }
 
-  public async createNewUser(data: NewUserType): Promise<UserType> {
+  public async createNewUser(data: NewUserType): Promise<IUserModel> {
     const existingUser = await User.findOne({email: data.email});
-    if (!existingUser) {
-      throw new Error('User exist');
+    if (existingUser) {
+      throw new AuthError(`User "${data.email}" exist`);
     }
-    return await this.createUser(data);
+    return new this.model(data);
   }
 
-  public async createUser(data: NewUserType): Promise<UserType> {
-    const user = await this.model.create(data);
-    return UserStore.prepareUser(user);
-  }
+  // public async createUser(data: NewUserType): Promise<UserType> {
+  //   const user = await this.createRawUser(data);
+  //   return UserStore.prepareUser(user);
+  // }
 
   public async getUsers(conditions?: object): Promise<Array<UserType>> {
     const users = await this.model.find(conditions);

@@ -1,6 +1,7 @@
 import * as passport from 'passport';
 import * as passportLocal from 'passport-local';
 import {User} from './store/models/user';
+import {NotFoundError} from "./errors/not-found-error";
 
 const LocalStrategy = passportLocal.Strategy;
 passport.serializeUser((user: any, done) => {
@@ -22,8 +23,7 @@ passport.use(new LocalStrategy({usernameField}, (email, password, done) => {
 
         // User not found
         if (!user) {
-            console.log('User not found')
-            return done(null, false)
+            return done(new NotFoundError(`User "${email}" not found`), false);
         }
 
         try {
