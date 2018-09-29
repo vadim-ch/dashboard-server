@@ -2,6 +2,7 @@ import * as passport from 'passport';
 import * as passportLocal from 'passport-local';
 import {User} from './store/models/user';
 import {NotFoundError} from "./errors/not-found-error";
+import {AuthError} from "./errors/auth-error";
 
 const LocalStrategy = passportLocal.Strategy;
 passport.serializeUser((user: any, done) => {
@@ -31,7 +32,7 @@ passport.use(new LocalStrategy({usernameField}, (email, password, done) => {
             if (isMatch) {
                 return done(null, user);
             } else {
-                return done(null, false);
+                return done(new AuthError(`User "${email}" incorrect password`), false);
             }
         } catch (err) {
             return done(err);
