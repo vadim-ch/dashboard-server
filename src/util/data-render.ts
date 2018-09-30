@@ -3,6 +3,7 @@ import * as util from 'util';
 
 import { MongoError } from 'mongodb';
 import {AuthError} from "../errors/auth-error";
+import {ValidationError} from "../errors/validation-error";
 // const ValidationError = require('../error/validation-error');
 
 const SUCCESS_CODE = 200;
@@ -62,9 +63,9 @@ export const renderDataSuccess = (req, res, data) => render(req, res, data, true
 export const renderDataError = (req, res, data) => render(req, res, data, false);
 export const renderException = (req, res, exception) => {
   let data = exception;
-  // if (exception instanceof ValidationError) {
-  //   data = exception.errors;
-  // } else
+  if (exception instanceof ValidationError) {
+    data = exception.errors;
+  } else
     if (exception instanceof MongoError) {
     data = {};
     switch (exception.code) {

@@ -1,27 +1,31 @@
-// interface IUser {
-//   validate(): boolean;
-//   checkAuth(): void;
-//   checkCurrentUser(): void;
-// }
+import {Request, Response} from "express";
+import {logger} from "../logger";
+import { validationResult } from 'express-validator/check';
 
-class Controller {
-  constructor(validateRules: Array<any>,) {
+export interface IController {
+  validate(req: Request, res: Response, next): void;
+  checkAuth(): void;
+  run(req: Request, res: Response, next: (data?: any) => void): void;
+}
 
-  }
-
-  protected validate(): boolean {
-    return true;
-  }
-
-  protected checkAuth() {
+export class Controller {
+  constructor() {
 
   }
 
-  protected checkCurrentUser() {
+  public validate(req: Request, res: Response, next): void {
 
   }
 
-  public get handler() {
+  public checkAuth() {
 
+  }
+  //
+  // protected checkCurrentUser() {
+  //
+  // }
+
+  public async run(req: Request, res: Response, next: (data?: any) => void) {
+    logger.error(`Called base controller handler for ${req.baseUrl}. Need implement method.`);
   }
 }
