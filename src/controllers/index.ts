@@ -1,9 +1,27 @@
-export const controllerHandler = (promise, params) => async (req, res, next) => {
-    const boundParams = params ? params(req, res, next) : [];
-    try {
-        const result = await promise(...boundParams);
-        return res.json(result || { message: 'OK' });
-    } catch (error) {
-        return res.status(500) && next(error);
-    }
-};
+// interface IUser {
+//   validate(): boolean;
+//   checkAuth(): void;
+//   checkCurrentUser(): void;
+// }
+
+class Controller {
+  constructor(validateRules: Array<any>,) {
+
+  }
+
+  protected validate(): boolean {
+    return true;
+  }
+
+  protected checkAuth() {
+
+  }
+
+  protected checkCurrentUser() {
+
+  }
+
+  public get handler() {
+
+  }
+}
