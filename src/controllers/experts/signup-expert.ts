@@ -1,8 +1,8 @@
 import {Controller, IController} from '../';
 import {Request, Response} from 'express';
-import {userStore} from '../../store/users';
 import {check} from "express-validator/check";
-import {userLoginHandler} from "./helper";
+import {expertLoginHandler} from "./helper";
+import {expertsStore} from "../../store/expert";
 
 export class SignupExpert extends Controller implements IController {
   public validateRules: Array<any> = [
@@ -22,11 +22,11 @@ export class SignupExpert extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const rawUser = await userStore.createNewUser({
+    const rawExpert = await expertsStore.createNewExpert({
       firstName: req.body.firstName,
       email: req.body.email,
       password: req.body.password,
     });
-    req.login(rawUser, {session: false}, userLoginHandler(rawUser, req, res, next));
+    req.login(rawExpert, {session: false}, expertLoginHandler(rawExpert, req, res, next));
   }
 }

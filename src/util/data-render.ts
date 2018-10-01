@@ -1,7 +1,7 @@
-import { UnauthorizedError } from 'express-jwt';
+import {UnauthorizedError} from 'express-jwt';
 import * as util from 'util';
 
-import { MongoError } from 'mongodb';
+import {MongoError} from 'mongodb';
 import {AuthError} from "../errors/auth-error";
 import {ValidationError} from "../errors/validation-error";
 // const ValidationError = require('../error/validation-error');
@@ -49,11 +49,11 @@ const render = (req, res, data, success) => {
   const badStatusCode = data.code ? data.code : BAD_DATA_CODE;
   res.status(success ? SUCCESS_CODE : badStatusCode);
   switch (req.accepts([`json`, `html`])) {
-    // case `html`:
-    //   res.set(`Content-Type`, `text/html`);
-    //   const referer = req.header(`Referer`);
-    //   res.send((success ? renderSuccessHtml : renderErrorHtml)(data, referer));
-    //   break;
+      // case `html`:
+      //   res.set(`Content-Type`, `text/html`);
+      //   const referer = req.header(`Referer`);
+      //   res.send((success ? renderSuccessHtml : renderErrorHtml)(data, referer));
+      //   break;
     default:
       res.json(data);
   }
@@ -65,8 +65,7 @@ export const renderException = (req, res, exception) => {
   let data = exception;
   if (exception instanceof ValidationError) {
     data = exception.errors;
-  } else
-    if (exception instanceof MongoError) {
+  } else if (exception instanceof MongoError) {
     data = {};
     switch (exception.code) {
       case 11000:
@@ -77,12 +76,12 @@ export const renderException = (req, res, exception) => {
         data.code = 501;
         data.errorMessage = exception.message;
     }
-  } else if (exception instanceof UnauthorizedError) {
+  } else if (exception.name === 'UnauthorizedError') {
     data.code = 401;
     data.errorMessage = 'Error: invalid token';
   } else if (exception instanceof AuthError) {
-        data.code = exception.code;
-        data.errorMessage = exception.errorMessage;
-    }
+    data.code = exception.code;
+    data.errorMessage = exception.errorMessage;
+  }
   render(req, res, data, false);
 };

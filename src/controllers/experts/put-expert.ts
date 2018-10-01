@@ -6,6 +6,7 @@ import {NotFoundError} from "../../errors/not-found-error";
 import {checkSchema, param, validationResult} from "express-validator/check";
 import {ValidationError} from "../../errors/validation-error";
 import {SESSION_SECRET} from "../../util/env-vars";
+import {expertsStore} from "../../store/expert";
 
 export class PutExpertById extends Controller implements IController {
   public validateRules: Array<any> = [
@@ -34,7 +35,7 @@ export class PutExpertById extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const userId = req.params.id;
+    const expertId = req.params.id;
     let updateData: UserUpdateFields = {};
     if (req.body.firstName) {
       updateData.firstName = req.body.firstName;
@@ -42,10 +43,10 @@ export class PutExpertById extends Controller implements IController {
     if (req.body.lastName) {
       updateData.lastName = req.body.lastName;
     }
-    const user = await userStore.findAndUpdateUser(userId, updateData);
-    if (!user) {
-      throw new NotFoundError(`User '${userId}' not found`);
+    const expert = await expertsStore.findAndUpdateExpert(expertId, updateData);
+    if (!expert) {
+      throw new NotFoundError(`Expert '${expertId}' not found`);
     }
-    renderDataSuccess(req, res, user);
+    renderDataSuccess(req, res, expert);
   }
 }

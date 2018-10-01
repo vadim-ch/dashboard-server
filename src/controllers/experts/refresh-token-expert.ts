@@ -2,8 +2,8 @@ import {Controller, IController} from '../';
 import {Request, Response} from 'express';
 import {renderDataSuccess} from '../../util/data-render';
 import {tokenGenerator} from '../../util/token-generator';
-import {UserStore} from '../../store/users';
 import {NotFoundError} from '../../errors/not-found-error';
+import {ExpertsStore} from "../../store/expert";
 
 export class RefreshTokenExpert extends Controller implements IController {
   public validateRules: Array<any> = [
@@ -21,21 +21,21 @@ export class RefreshTokenExpert extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // TODO prichesat. privesti k ostalnim handleram
-    const user = await req.user;
-    if (!user) {
-      throw new NotFoundError(`User '${user._id}' not found`);
+    const expert = await req.user;
+    if (!expert) {
+      throw new NotFoundError(`Expert '${expert._id}' not found`);
     }
     const decodedRefreshToken = await tokenGenerator.verifyToken(req.body.refreshToken);
-    if (user.refreshTokenMap[decodedRefreshToken['jwtid']]) {
-      delete user.refreshTokenMap[req.body.refreshToken];
-      const preparedUser = UserStore.prepareUser(user);
-      const newAccessToken = await tokenGenerator.makeAccessToken(preparedUser);
-      const [newRefreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(preparedUser);
-      user.refreshTokenMap = {
-        ...user.refreshTokenMap,
+    if (expert.refreshTokenMap[decodedRefreshToken['jwtid']]) {
+      delete expert.refreshTokenMap[req.body.refreshToken];
+      const preparedExpert = ExpertsStore.prepareExpert(expert);
+      const newAccessToken = await tokenGenerator.makeAccessToken(preparedExpert);
+      const [newRefreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(preparedExpert);
+      expert.refreshTokenMap = {
+        ...expert.refreshTokenMap,
         [refreshUuid]: newRefreshToken
       };
-      await user.save();
+      await expert.save();
       renderDataSuccess(req, res, {
         accessToken: newAccessToken,
         refreshToken: newRefreshToken

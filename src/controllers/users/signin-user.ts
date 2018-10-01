@@ -3,7 +3,7 @@ import {Request, Response} from 'express';
 import {check, validationResult} from "express-validator/check";
 import {ValidationError} from "../../errors/validation-error";
 import {userLoginHandler} from "./helper";
-import * as passport from 'passport';
+import {clientAuth} from "../../passport";
 
 export class SigninUser extends Controller implements IController {
   public validateRules: Array<any> = [
@@ -23,7 +23,7 @@ export class SigninUser extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
-    passport.authenticate('local', {session: false}, (err, user, info) => {
+    clientAuth.authenticate('local', {session: false}, (err, user, info) => {
       if (err) {
         next(err);
       }

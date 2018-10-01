@@ -1,20 +1,15 @@
 import {Controller, IController} from '../';
 import {Request, Response} from 'express';
 import {renderDataSuccess} from '../../util/data-render';
-import {userStore} from '../../store/users';
-import {NotFoundError} from "../../errors/not-found-error";
-import {checkSchema, param, validationResult} from "express-validator/check";
-import {ValidationError} from "../../errors/validation-error";
-import {SESSION_SECRET} from "../../util/env-vars";
-import {expertsStore} from "../../store/expert";
+import {UserStore} from '../../store/users';
+import {NotFoundError} from '../../errors/not-found-error';
+import {SESSION_SECRET} from '../../util/env-vars';
 
-export class GetExpertById extends Controller implements IController {
-  public validateRules: Array<any> = [
-    param('id').isString().isBase64().isLength({min: 5}),
-  ];
+export class GetCurrentUser extends Controller implements IController {
+  public validateRules: Array<any> = [];
 
   constructor() {
-    super();
+    super(SESSION_SECRET);
   }
 
   public validate(req: Request, res: Response, next): void {
@@ -37,11 +32,12 @@ export class GetExpertById extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const expertId = req.params.id;
-    const expert = await expertsStore.getUserById(expertId);
-    if (!expert) {
-      throw new NotFoundError(`Expert '${expertId}' not found`);
+    console.error(req.user);
+    const user = UserStore.prepareUser(req.user);
+    // const user = await userStore.getUserById(userId);
+    if (!user) {
+      throw new NotFoundError(`User not found`);
     }
-    renderDataSuccess(req, res, expert);
+    renderDataSuccess(req, res, user);
   }
 }

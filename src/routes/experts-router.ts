@@ -16,17 +16,12 @@ export class ExpertsRouter extends BaseRouter implements IRouter {
   }
 
   public router(): Router {
-    router.get(``, this.handlerRunner(new AllExperts()));
-    const getExpert = new GetExpertById();
-    const putExpert = new PutExpertById();
-    const signin = new SigninExpert();
-    const signup = new SignupExpert();
-    const logout = new LogoutExpert();
-    router.get(`/:id`, getExpert.validateRules, this.handlerRunner(getExpert));
-    router.put(`/:id`, putExpert.validateRules, this.handlerRunner(putExpert));
-    router.post(`/signin`, signin.validateRules, this.handlerRunner(signin));
-    router.post(`/signup`, logout.validateRules, this.handlerRunner(signup));
-    router.post(`/logout`, signup.validateRules, this.handlerRunner(logout));
+    router.get(``, ...this.handlerRunner(new AllExperts()));
+    router.get(`/:id`, ...this.handlerRunner(new GetExpertById()));
+    router.put(`/:id`, ...this.handlerRunner(new PutExpertById()));
+    router.post(`/signin`, ...this.handlerRunner(new SigninExpert()));
+    router.post(`/register`, ...this.handlerRunner(new SignupExpert()));
+    router.post(`/logout`, ...this.handlerRunner(new LogoutExpert()));
 
     router.use((exception, req, res, next) => {
       renderException(req, res, exception);

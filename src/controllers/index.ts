@@ -12,6 +12,7 @@ export interface IController {
 
 export class Controller {
   private secret: string;
+  public validateRules: Array<any> = [];
   constructor(secret?: string) {
     this.secret = secret;
   }
@@ -20,11 +21,13 @@ export class Controller {
 
   }
 
-  public checkAuth(req: Request, res: Response, next) {
+  public checkAuth = (req: Request, res: Response, next) => {
     if (this.secret) {
       expressJwt({secret: this.secret})(req, res, next);
+    } else {
+      next();
     }
-  }
+  };
   //
   // protected checkCurrentUser() {
   //

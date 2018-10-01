@@ -19,6 +19,6 @@ export class LogoutExpert extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     await req.logout();
-    renderDataSuccess(req, res, {message: 'User is logged out'});
+    renderDataSuccess(req, res, {message: 'Expert is logged out'});
   }
 }

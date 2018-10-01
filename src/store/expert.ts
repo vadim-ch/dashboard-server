@@ -7,6 +7,7 @@ export interface ExpertType {
   firstName: string;
   lastName: string;
   email: string;
+  role: string;
 }
 
 export interface NewExpertType {
@@ -33,7 +34,8 @@ export class ExpertsStore {
       id: user._id.toString(),
       firstName: user.firstName,
       lastName: user.lastName,
-      email: user.email
+      email: user.email,
+      role: 'temp'
     }
   }
 
@@ -42,7 +44,7 @@ export class ExpertsStore {
     return ExpertsStore.prepareExpert(user);
   }
 
-  public async createNewUser(data: NewExpertType): Promise<IExpertModel> {
+  public async createNewExpert(data: NewExpertType): Promise<IExpertModel> {
     const existingUser = await Expert.findOne({email: data.email});
     if (existingUser) {
       throw new AuthError(`User "${data.email}" exist`);
@@ -50,7 +52,7 @@ export class ExpertsStore {
     return new this.model(data);
   }
 
-  public async findAndUpdateUser(id: string, fields: ExpertUpdateFields): Promise<ExpertType> {
+  public async findAndUpdateExpert(id: string, fields: ExpertUpdateFields): Promise<ExpertType> {
     const updatedUser = await this.model.findByIdAndUpdate(id, fields, {new: true});
     return ExpertsStore.prepareExpert(updatedUser);
   }
