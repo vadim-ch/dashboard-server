@@ -22,7 +22,6 @@ export class BaseRouter {
       asyncHandler(async(req: Request, res: Response, next: (data?: any) => void) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-          console.error(errors);
           throw new ValidationError(errors.array());
         }
 
