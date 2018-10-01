@@ -7,7 +7,7 @@ import {checkSchema, param, validationResult} from "express-validator/check";
 import {ValidationError} from "../../errors/validation-error";
 import {SESSION_SECRET} from "../../util/env-vars";
 
-export class GetUserById extends Controller implements IController {
+export class GetExpertById extends Controller implements IController {
   public validateRules: Array<any> = [
     param('id').isString().isBase64().isLength({min: 5}),
   ];
