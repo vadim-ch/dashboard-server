@@ -1,14 +1,8 @@
-
-FROM risingstack/alpine:3.4-v6.9.4-4.2.0
-
-ENV PORT 3001
-
-EXPOSE 3001
-
-COPY package.json package.json
+FROM keymetrics/pm2:latest-alpine
+RUN mkdir -p /app
+WORKDIR /app
+COPY package*.json ./
 RUN npm install
-
-COPY . .
-RUN npm run build
-
-CMD ["node", "dist/"]
+COPY . /app
+EXPOSE 3000
+CMD [ "pm2-runtime", "start", "ecosystem.config.js" ]

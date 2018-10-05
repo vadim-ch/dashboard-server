@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  app:
+    container_name: concordia
+    restart: on-failure
+    depends_on:
+      - db
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - db-net
+  db:
+    image: mongo
+    restart: on-failure
+    networks:
+      - db-net
+networks:
+  db-net:
