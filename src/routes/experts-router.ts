@@ -8,6 +8,7 @@ import {SigninExpert} from '../controllers/experts/signin-expert';
 import {SignupExpert} from '../controllers/experts/signup-expert';
 import {LogoutExpert} from '../controllers/experts/logout-expert';
 import {AllExperts} from '../controllers/experts/all-experts';
+import { GetCurrentExpert } from '../controllers/experts/current-expert';
 const router = express.Router();
 
 export class ExpertsRouter extends BaseRouter implements IRouter {
@@ -17,9 +18,10 @@ export class ExpertsRouter extends BaseRouter implements IRouter {
 
   public router(): Router {
     router.get(``, ...this.handlerRunner(new AllExperts()));
+    router.get(`/current`, ...this.handlerRunner(new GetCurrentExpert()));
     router.get(`/:id`, ...this.handlerRunner(new GetExpertById()));
     router.put(`/:id`, ...this.handlerRunner(new PutExpertById()));
-    router.post(`/signin`, ...this.handlerRunner(new SigninExpert()));
+    router.post(`/login`, ...this.handlerRunner(new SigninExpert()));
     router.post(`/register`, ...this.handlerRunner(new SignupExpert()));
     router.post(`/logout`, ...this.handlerRunner(new LogoutExpert()));
 
