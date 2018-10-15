@@ -28,7 +28,7 @@
 //   const userId = req.params.id;
 //   const user = await userStore.getUserById(userId);
 //   if (!user) {
-//     throw new NotFoundError(`User '${userId}' not found`);
+//     throw new NotFoundError(`Expert '${userId}' not found`);
 //   }
 //   renderDataSuccess(req, res, user);
 // });
@@ -44,7 +44,7 @@
 //   }
 //   const user = await userStore.findAndUpdateUser(userId, updateData);
 //   if (!user) {
-//     throw new NotFoundError(`User '${userId}' not found`);
+//     throw new NotFoundError(`Expert '${userId}' not found`);
 //   }
 //   renderDataSuccess(req, res, user);
 // });
@@ -84,7 +84,7 @@
 //
 // export const logoutController = asyncHandler(async (req, res, next) => {
 //   await req.logout();
-//   renderDataSuccess(req, res, {message: 'User is logged out'});
+//   renderDataSuccess(req, res, {message: 'Expert is logged out'});
 // });
 //
 // export const refreshTokenController = asyncHandler(async (req, res, next) => {

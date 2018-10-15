@@ -1,6 +1,9 @@
 import { Model } from 'mongoose';
 import {AuthError} from '../errors/auth-error';
-import {Expert, IExpertModel} from './models/expert';
+// import {Expert, IExpertModel} from './models/expert';
+import { Expert } from '../entity/Expert';
+import { getRepository } from 'typeorm';
+import { Repository } from 'typeorm/repository/Repository';
 
 export interface ExpertType {
   id: string;
@@ -24,14 +27,12 @@ export type ExpertUpdateFields = {
 }
 
 export class ExpertsStore {
-  private model: Model<IExpertModel>;
-  constructor(model: Model<IExpertModel>) {
-    this.model = model;
+  constructor() {
   }
 
-  static prepareExpert(user: IExpertModel): ExpertType {
+  static prepareExpert(user: Expert): ExpertType {
     return {
-      id: user._id.toString(),
+      id: String(user.id),
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
@@ -39,28 +40,41 @@ export class ExpertsStore {
     }
   }
 
+  private get userRepository(): Repository<Expert> {
+    return getRepository<Expert>(Expert);
+  }
+
   public async getUserById(id: string): Promise<ExpertType> {
-    const user = await this.model.findById(id);
+    // const user = await this.model.findById(id);
+    const user = await this.userRepository.findOne(id);
     return ExpertsStore.prepareExpert(user);
   }
 
-  public async createNewExpert(data: NewExpertType): Promise<IExpertModel> {
-    const existingUser = await Expert.findOne({email: data.email});
+  public async createNewExpert(data: NewExpertType): Promise<Expert> {
+    const existingUser = await this.userRepository.findOne({email: data.email});
     if (existingUser) {
       throw new AuthError(`User "${data.email}" exist`);
     }
-    return new this.model(data);
+    return this.userRepository.create(data);
   }
 
   public async findAndUpdateExpert(id: string, fields: ExpertUpdateFields): Promise<ExpertType> {
-    const updatedUser = await this.model.findByIdAndUpdate(id, fields, {new: true});
-    return ExpertsStore.prepareExpert(updatedUser);
+    const updatedUser = await this.userRepository.update(id, fields);
+    return ExpertsStore.prepareExpert(updatedUser.raw);
   }
 
   public async getExperts(conditions?: object): Promise<Array<ExpertType>> {
-    const experts = await this.model.find(conditions);
+    const experts = await this.userRepository.find(conditions);
     return experts.map(ExpertsStore.prepareExpert);
   }
 }
 
-export const expertsStore = new ExpertsStore(Expert);
+// await userRepository.save({
+//   firstName: "Micle",
+//   lastName: "Carmicle",
+//   age: 105,
+//   role: 'Dad'
+// });
+// const all = await userRepository.find();
+
+export const expertsStore = new ExpertsStore();

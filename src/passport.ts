@@ -35,7 +35,7 @@ clientAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, don
             return done(err)
         }
 
-        // User not found
+        // Expert not found
         if (!user) {
             return done(new NotFoundError(`User "${email}" not found`), false);
         }
@@ -60,7 +60,7 @@ expertAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, don
             return done(err)
         }
 
-        // User not found
+        // Expert not found
         if (!user) {
             return done(new NotFoundError(`Expert "${email}" not found`), false);
         }

@@ -1,9 +1,10 @@
 import {renderDataSuccess} from '../../util/data-render';
 import {tokenGenerator} from '../../util/token-generator';
 import {IExpertModel} from "../../store/models/expert";
-import {ExpertsStore} from "../../store/expert";
+import {ExpertsStore} from '../../store/expert';
+import { Expert } from '../../entity/Expert';
 
-export const expertLoginHandler = (expert: IExpertModel, req, res, next) => {
+export const expertLoginHandler = (expert: Expert, req, res, next) => {
   return async (err) => {
     if (err) {
       return next(err);
@@ -11,11 +12,11 @@ export const expertLoginHandler = (expert: IExpertModel, req, res, next) => {
     const preparedExpert = ExpertsStore.prepareExpert(expert);
     const accessToken = await tokenGenerator.makeAccessToken(preparedExpert);
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(preparedExpert);
-    expert.refreshTokenMap = {
-      ...expert.refreshTokenMap,
-      [refreshUuid]: refreshToken
-    };
-    await expert.save();
+    // expert.refreshTokenMap = {
+    //   ...expert.refreshTokenMap,
+    //   [refreshUuid]: refreshToken
+    // };
+    // await expert.save();
     renderDataSuccess(req, res, {
       accessToken,
       refreshToken

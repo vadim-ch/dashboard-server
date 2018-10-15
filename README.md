@@ -1,3 +1,8 @@
-mongo install
-mongod --dbpath ./data/db
-MONGODB_URI_LOCAL=mongodb://localhost:27017 SESSION_SECRET=ashdfjhasdlkjfhalksdjhflak npm run start
+install postgres
+npm run start
+
+для входа в psql
+sudo -u postgres psql
+
+для создания базы
+createdb testserver

@@ -14,7 +14,7 @@ import('./passport');
 class App {
   public express;
 
-  constructor () {
+  constructor() {
     this.express = express();
 
     const whitelist = ['http://localhost:8080'];
@@ -55,4 +55,4 @@ class App {
   }
 }
 
-export default new App().express
+export default App;
