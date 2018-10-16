@@ -3,7 +3,8 @@ import * as passportLocal from 'passport-local';
 import {User} from './store/models/user';
 import {NotFoundError} from "./errors/not-found-error";
 import {AuthError} from "./errors/auth-error";
-import {Expert} from "./store/models/expert";
+import {expertsStore} from "./store/expert";
+// import {Expert} from "./store/models/expert";
 
 const LocalStrategy = passportLocal.Strategy;
 export const clientAuth = new passport.Passport();
@@ -24,9 +25,13 @@ expertAuth.serializeUser((expert: any, done) => {
 });
 
 expertAuth.deserializeUser((id, done) => {
-    Expert.findById(id, (err, expert) => {
-        done(err, expert);
-    });
+    expertsStore.getUserById(id as any)
+        .then(expert => {
+            done(null, expert);
+        })
+        .catch((err) => {
+            done(err);
+        });
 });
 
 clientAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
@@ -55,25 +60,26 @@ clientAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, don
 
 
 expertAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
-    Expert.findOne({email: email.toLowerCase()}, async (err, user) => {
-        if (err) {
-            return done(err)
-        }
-
-        // Expert not found
-        if (!user) {
-            return done(new NotFoundError(`Expert "${email}" not found`), false);
-        }
-
-        try {
-            const isMatch = await user.comparePassword(password);
-            if (isMatch) {
-                return done(null, user);
-            } else {
-                return done(new AuthError(`Expert "${email}" incorrect password`), false);
+    expertsStore.findByEmail(email.toLowerCase())
+        .then(async (expert) => {
+            // Expert not found
+            if (!expert) {
+                return done(new NotFoundError(`Expert "${email}" not found`), false);
             }
-        } catch (err) {
-            return done(err);
-        }
-    });
+            try {
+                const isMatch = await expert.comparePassword(password);
+                if (isMatch) {
+                    return done(null, expert);
+                } else {
+                    return done(new AuthError(`Expert "${email}" incorrect password`), false);
+                }
+            } catch (err) {
+                return done(err);
+            }
+        })
+        .then(err => {
+            if (err) {
+                return done(err)
+            }
+        });
 }));

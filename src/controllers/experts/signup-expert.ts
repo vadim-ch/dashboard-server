@@ -3,13 +3,14 @@ import {Request, Response} from 'express';
 import {check} from "express-validator/check";
 import {expertLoginHandler} from "./helper";
 import {expertsStore} from "../../store/expert";
+import {tokenGenerator} from "../../util/token-generator";
 
 export class SignupExpert extends Controller implements IController {
   public validateRules: Array<any> = [
     check('email').isEmail(),
     // password must be at least 5 chars long
     check('password').isLength({min: 5}),
-    check('username').isLength({min: 2}),
+    check('firstName').isLength({min: 2}),
   ];
 
   constructor() {
@@ -24,9 +25,14 @@ export class SignupExpert extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const rawExpert = await expertsStore.createNewExpert({
       firstName: req.body.firstName,
+      lastName: req.body.firstName,
       email: req.body.email,
       password: req.body.password,
+      age: '56'
     });
-    req.login(rawExpert, {session: false}, expertLoginHandler(rawExpert, req, res, next));
+    const accessToken = await tokenGenerator.makeAccessToken(rawExpert);
+    const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(rawExpert);
+    await expertsStore.addRefreshToken(rawExpert.id, refreshUuid, refreshToken);
+    req.login(rawExpert, {session: false}, expertLoginHandler(req, res, next, accessToken, refreshToken));
   }
 }

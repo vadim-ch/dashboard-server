@@ -3,6 +3,8 @@ import {Request, Response} from 'express';
 import {check} from 'express-validator/check';
 import {expertLoginHandler} from './helper';
 import {expertAuth} from '../../passport';
+import {expertsStore} from "../../store/expert";
+import {tokenGenerator} from "../../util/token-generator";
 
 export class SigninExpert extends Controller implements IController {
   public validateRules: Array<any> = [
@@ -22,12 +24,17 @@ export class SigninExpert extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
-    expertAuth.authenticate('local', {session: false}, (err, user, info) => {
+    expertAuth.authenticate('local', {session: false}, async (err, expert, info) => {
       if (err) {
         next(err);
       }
-      if (user) {
-        req.login(user, {session: false}, expertLoginHandler(user, req, res, next));
+      if (expert) {
+        // const updatedExpert = await expertsStore.findAndUpdateExpert(userId, );
+
+          const accessToken = await tokenGenerator.makeAccessToken(expert);
+          const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(expert);
+          await expertsStore.addRefreshToken(expert.id, refreshUuid, refreshToken);
+        req.login(expert, {session: false}, expertLoginHandler(req, res, next, accessToken, refreshToken));
       }
     })(req, res, next);
   }

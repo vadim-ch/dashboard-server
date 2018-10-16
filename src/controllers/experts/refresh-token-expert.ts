@@ -21,9 +21,9 @@ export class RefreshTokenExpert extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // TODO prichesat. privesti k ostalnim handleram
-    const expert = await req.user;
+    const expert = req.user;
     if (!expert) {
-      throw new NotFoundError(`Expert '${expert._id}' not found`);
+      throw new NotFoundError(`Expert '${expert.id}' not found`);
     }
     const decodedRefreshToken = await tokenGenerator.verifyToken(req.body.refreshToken);
     if (expert.refreshTokenMap[decodedRefreshToken['jwtid']]) {

@@ -1,9 +1,9 @@
 import { Model } from 'mongoose';
 import {AuthError} from '../errors/auth-error';
-// import {Expert, IExpertModel} from './models/expert';
 import { Expert } from '../entity/Expert';
 import { getRepository } from 'typeorm';
 import { Repository } from 'typeorm/repository/Repository';
+import {compare} from "bcrypt";
 
 export interface ExpertType {
   id: string;
@@ -11,6 +11,8 @@ export interface ExpertType {
   lastName: string;
   email: string;
   role: string;
+  createdDate: Date;
+  updatedDate: Date;
 }
 
 export interface NewExpertType {
@@ -18,6 +20,7 @@ export interface NewExpertType {
   lastName?: string;
   email: string;
   password: string;
+  age: string;
 }
 
 export type ExpertUpdateFields = {
@@ -36,7 +39,9 @@ export class ExpertsStore {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      role: 'temp'
+      role: 'temp',
+      createdDate: user.createdDate,
+      updatedDate: user.updatedDate
     }
   }
 
@@ -50,22 +55,37 @@ export class ExpertsStore {
     return ExpertsStore.prepareExpert(user);
   }
 
+  public async findByEmail(email: string): Promise<Expert> {
+    return await this.userRepository.findOne({email});
+  }
+
   public async createNewExpert(data: NewExpertType): Promise<Expert> {
     const existingUser = await this.userRepository.findOne({email: data.email});
     if (existingUser) {
       throw new AuthError(`User "${data.email}" exist`);
     }
-    return this.userRepository.create(data);
+    const expert = this.userRepository.create(data);
+    await this.userRepository.save(expert);
+    return expert;
   }
 
   public async findAndUpdateExpert(id: string, fields: ExpertUpdateFields): Promise<ExpertType> {
-    const updatedUser = await this.userRepository.update(id, fields);
-    return ExpertsStore.prepareExpert(updatedUser.raw);
+    const updatedExpert = await this.userRepository.update(id, fields);
+    return ExpertsStore.prepareExpert(updatedExpert.raw);
   }
 
   public async getExperts(conditions?: object): Promise<Array<ExpertType>> {
     const experts = await this.userRepository.find(conditions);
     return experts.map(ExpertsStore.prepareExpert);
+  }
+
+  public async addRefreshToken(expertId: string, refreshId: string, refreshToken: string): Promise<ExpertType> {
+      const updatedExpert = await this.userRepository.update(expertId, {
+        refreshTokenMap: {
+            [refreshId]: refreshToken
+        }
+      });
+      return ExpertsStore.prepareExpert(updatedExpert.raw);
   }
 }
 

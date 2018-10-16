@@ -10,7 +10,7 @@ import {expertsStore} from "../../store/expert";
 
 export class GetExpertById extends Controller implements IController {
   public validateRules: Array<any> = [
-    param('id').isString().isBase64().isLength({min: 5}),
+    param('id').isString().isLength({min: 5}),
   ];
 
   constructor() {

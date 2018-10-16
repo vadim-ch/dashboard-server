@@ -19,10 +19,12 @@ createConnection().then(async connection => {
     logger.info(`Server running at ${serverAddress}/`);
   });
 
-  await connection.manager.save(connection.manager.create(Expert, {
-    firstName: "Timber",
-    lastName: "Saw",
-    email: 'emalie@emaul.ru',
-    age: '105',
-  }));
+  // await connection.manager.save(connection.manager.create(Expert, {
+  //   firstName: "Macle",
+  //   lastName: "Dudicov",
+  //   email: 'emalie@emaul.ru',
+  //   age: '1',
+  // }));
+  // let expertRepository = connection.getRepository(Expert);
+  // expertRepository.update('1', {email: '4@5.ru'})
 }).catch(error => console.log(error));
