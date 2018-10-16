@@ -1,6 +1,8 @@
 import {AuthError} from '../errors/auth-error';
 import { Expert } from '../entity/Expert';
 import { MainStore } from './main';
+import { getRepository } from 'typeorm';
+import { Cabinet } from '../entity/Cabinet';
 
 export interface ExpertType {
   id: string;

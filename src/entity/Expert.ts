@@ -1,13 +1,15 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    BeforeInsert,
-    BeforeUpdate
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate, OneToMany
 } from 'typeorm';
 import {compare, hash} from "bcrypt";
+import { Cabinet } from './Cabinet';
+import {Contains, IsInt, Length, IsEmail, IsFQDN, IsDate, Min, Max} from 'class-validator';
 
 @Entity('Expert')
 export class Expert {
@@ -22,9 +24,11 @@ export class Expert {
     updatedDate: Date;
 
     @Column()
+    @IsEmail()
     email: string;
 
     @Column()
+    @Min(0)
     password: string;
 
     @Column()
@@ -36,9 +40,16 @@ export class Expert {
     @Column()
     age: string;
 
-    @Column({
-        nullable: true
-    })
+    @Column({nullable: true})
+    addresses: string;
+
+    @Column({nullable: true})
+    hours: string;
+
+    @OneToMany(type => Cabinet, cabinet => cabinet.owner)
+    cabinets: Cabinet[];
+
+    @Column({nullable: true})
     role: string;
 
     @Column({type: 'hstore', nullable: true})

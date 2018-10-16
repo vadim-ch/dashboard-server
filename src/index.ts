@@ -1,3 +1,5 @@
+import { Cabinet } from './entity/Cabinet';
+
 require(`dotenv`).config();
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
@@ -20,11 +22,17 @@ createConnection().then(async connection => {
     logger.info(`Server running at ${serverAddress}/`);
   });
 
+  // const cabinet1 = new Cabinet();
+  // cabinet1.address = '123';
+  // cabinet1.availableHours = '123123';
+  // await connection.manager.save(cabinet1);
   // await connection.manager.save(connection.manager.create(Expert, {
-  //   firstName: "Macle",
+  //   firstName: "Macle11111",
   //   lastName: "Dudicov",
   //   email: 'emalie@emaul.ru',
   //   age: '1',
+  //   password: '123123',
+  //   cabinets: [cabinet1]
   // }));
   // let expertRepository = connection.getRepository(Expert);
   // expertRepository.update('1', {email: '4@5.ru'})

@@ -21,6 +21,7 @@
     "@types/validator": "^9.4.2",
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
+    "class-validator": "^0.9.1",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
     "errorhandler": "^1.5.0",
