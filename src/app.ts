@@ -1,4 +1,3 @@
-require(`dotenv`).config();
 import * as express from 'express'
 // import * as lusca from 'lusca';
 import * as morgan from 'morgan';
