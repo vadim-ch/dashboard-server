@@ -1,7 +1,7 @@
 import {Controller, IController} from '../';
 import {Request, Response} from 'express';
 import {check} from "express-validator/check";
-import {expertLoginHandler} from "./helper";
+import {loginHandler} from "../helper";
 import {expertsStore} from "../../store/expert";
 import {tokenGenerator} from "../../util/token-generator";
 
@@ -33,6 +33,6 @@ export class SignupExpert extends Controller implements IController {
     const accessToken = await tokenGenerator.makeAccessToken(rawExpert);
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(rawExpert);
     await expertsStore.addRefreshToken(rawExpert.id, refreshUuid, refreshToken);
-    req.login(rawExpert, {session: false}, expertLoginHandler(req, res, next, accessToken, refreshToken));
+    req.login(rawExpert, {session: false}, loginHandler(req, res, next, accessToken, refreshToken));
   }
 }

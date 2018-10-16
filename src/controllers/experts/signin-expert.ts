@@ -1,10 +1,10 @@
-import {Controller, IController} from '../';
-import {Request, Response} from 'express';
-import {check} from 'express-validator/check';
-import {expertLoginHandler} from './helper';
-import {expertAuth} from '../../passport';
-import {expertsStore} from "../../store/expert";
-import {tokenGenerator} from "../../util/token-generator";
+import { Controller, IController } from '../';
+import { Request, Response } from 'express';
+import { check } from 'express-validator/check';
+import { loginHandler } from '../helper';
+import { expertAuth } from '../../passport';
+import { expertsStore } from '../../store/expert';
+import { tokenGenerator } from '../../util/token-generator';
 
 export class SigninExpert extends Controller implements IController {
   public validateRules: Array<any> = [
@@ -31,10 +31,10 @@ export class SigninExpert extends Controller implements IController {
       if (expert) {
         // const updatedExpert = await expertsStore.findAndUpdateExpert(userId, );
 
-          const accessToken = await tokenGenerator.makeAccessToken(expert);
-          const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(expert);
-          await expertsStore.addRefreshToken(expert.id, refreshUuid, refreshToken);
-        req.login(expert, {session: false}, expertLoginHandler(req, res, next, accessToken, refreshToken));
+        const accessToken = await tokenGenerator.makeAccessToken(expert);
+        const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(expert);
+        await expertsStore.addRefreshToken(expert.id, refreshUuid, refreshToken);
+        req.login(expert, {session: false}, loginHandler(req, res, next, accessToken, refreshToken));
       }
     })(req, res, next);
   }

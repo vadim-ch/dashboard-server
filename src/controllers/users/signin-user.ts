@@ -1,9 +1,10 @@
-import {Controller, IController} from '../';
-import {Request, Response} from 'express';
-import {check, validationResult} from "express-validator/check";
-import {ValidationError} from "../../errors/validation-error";
-import {userLoginHandler} from "./helper";
-import {clientAuth} from "../../passport";
+import { Controller, IController } from '../';
+import { Request, Response } from 'express';
+import { check } from "express-validator/check";
+import { clientAuth } from "../../passport";
+import { tokenGenerator } from '../../util/token-generator';
+import { loginHandler } from '../helper';
+import { userStore } from '../../store/users';
 
 export class SigninUser extends Controller implements IController {
   public validateRules: Array<any> = [
@@ -23,12 +24,15 @@ export class SigninUser extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
-    clientAuth.authenticate('local', {session: false}, (err, user, info) => {
+    clientAuth.authenticate('local', {session: false}, async (err, user, info) => {
       if (err) {
         next(err);
       }
       if (user) {
-        req.login(user, {session: false}, userLoginHandler(user, req, res, next));
+        const accessToken = await tokenGenerator.makeAccessToken(user);
+        const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(user);
+        await userStore.addRefreshToken(user.id, refreshUuid, refreshToken);
+        req.login(user, {session: false}, loginHandler(req, res, next, accessToken, refreshToken));
       }
     })(req, res, next);
   }

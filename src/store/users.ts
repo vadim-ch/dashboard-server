@@ -1,13 +1,7 @@
-import { IUser, IUserModel, User } from './models/user';
-import { Model } from 'mongoose';
-import { MongoError } from 'mongodb';
 import {AuthError} from "../errors/auth-error";
+import { User } from '../entity/User';
+import { MainStore } from './main';
 
-export const UserRole = {
-  Client: 'client',
-  Expert: 'expert',
-  Admin: 'admin'
-};
 
 export interface UserType {
   id: string;
@@ -20,6 +14,7 @@ export interface UserType {
 export interface NewUserType {
   firstName: string;
   lastName?: string;
+  age: string;
   email: string;
   password: string;
 }
@@ -30,15 +25,14 @@ export type UserUpdateFields = {
   role?: string;
 }
 
-export class UserStore {
-  private model: Model<IUserModel>;
-  constructor(model: Model<IUserModel>) {
-    this.model = model;
+export class UserStore extends MainStore<User> {
+  constructor() {
+    super(User);
   }
 
-  static prepareUser(user: IUserModel): UserType {
+  static prepareUser(user: User): UserType {
     return {
-      id: user._id.toString(),
+      id: user.id.toString(),
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
@@ -47,40 +41,42 @@ export class UserStore {
   }
 
   public async getUserById(id: string): Promise<UserType> {
-    const user = await this.model.findById(id);
+    const user = await this.repository.findOne(id);
     return UserStore.prepareUser(user);
   }
 
-  public async createNewUser(data: NewUserType): Promise<IUserModel> {
-    const existingUser = await User.findOne({email: data.email});
+  public async findByEmail(email: string): Promise<User> {
+    return await this.repository.findOne({email});
+  }
+
+  public async createNewUser(data: NewUserType): Promise<User> {
+    const existingUser = await this.repository.findOne({email: data.email});
     if (existingUser) {
       throw new AuthError(`User "${data.email}" exist`);
     }
-    return new this.model(data);
-  }
-
-  // public async createUser(data: NewUserType): Promise<UserType> {
-  //   const user = await this.createRawUser(data);
-  //   return UserStore.prepareUser(user);
-  // }
-
-  public async getUsers(conditions?: object): Promise<Array<UserType>> {
-    const users = await this.model.find(conditions);
-    return users.map(UserStore.prepareUser);
-  }
-
-  public async getAllExperts(): Promise<Array<UserType>> {
-    return this.getUsers({role: UserRole.Expert});
-  }
-
-  public async getAllClients(): Promise<Array<UserType>> {
-    return this.getUsers({role: UserRole.Client});
+    const expert = this.repository.create(data);
+    await this.repository.save(expert);
+    return expert;
   }
 
   public async findAndUpdateUser(id: string, fields: UserUpdateFields): Promise<UserType> {
-    const updatedUser = await this.model.findByIdAndUpdate(id, fields, {new: true});
-    return UserStore.prepareUser(updatedUser);
+    const updatedUser = await this.repository.update(id, fields);
+    return UserStore.prepareUser(updatedUser.raw);
+  }
+
+  public async getUsers(conditions?: object): Promise<Array<UserType>> {
+    const users = await this.repository.find(conditions);
+    return users.map(UserStore.prepareUser);
+  }
+
+  public async addRefreshToken(expertId: string, refreshId: string, refreshToken: string): Promise<UserType> {
+    const updatedUser = await this.repository.update(expertId, {
+      refreshTokenMap: {
+        [refreshId]: refreshToken
+      }
+    });
+    return UserStore.prepareUser(updatedUser.raw);
   }
 }
 
-export const userStore = new UserStore(User);
+export const userStore = new UserStore();

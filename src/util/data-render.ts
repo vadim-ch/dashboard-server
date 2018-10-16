@@ -1,7 +1,6 @@
 import {UnauthorizedError} from 'express-jwt';
 import * as util from 'util';
 
-import {MongoError} from 'mongodb';
 import {AuthError} from "../errors/auth-error";
 import {ValidationError} from "../errors/validation-error";
 // const ValidationError = require('../error/validation-error');
@@ -65,7 +64,7 @@ export const renderException = (req, res, exception) => {
   let data = exception;
   if (exception instanceof ValidationError) {
     data = exception.errors;
-  } else if (exception instanceof MongoError) {
+  } else if (exception.name === 'db error') { // добавить
     data = {};
     switch (exception.code) {
       case 11000:
