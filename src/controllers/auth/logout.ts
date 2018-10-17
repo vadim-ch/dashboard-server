@@ -5,7 +5,7 @@ import {ValidationError} from "../../errors/validation-error";
 import {SESSION_SECRET} from "../../util/env-vars";
 import {renderDataSuccess} from "../../util/data-render";
 
-export class LogoutExpert extends Controller implements IController {
+export class Logout extends Controller implements IController {
   public validateRules: Array<any> = [];
 
   constructor() {

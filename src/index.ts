@@ -1,11 +1,11 @@
-import { Cabinet } from './entity/Cabinet';
+import { Cabinet } from './entity/expert/Cabinet';
 
 require(`dotenv`).config();
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import App from './app'
 import { logger } from './logger';
-import { Expert } from './entity/Expert';
+import { Expert } from './entity/expert/Expert';
 
 
 const HOSTNAME = process.env.SERVER_HOST || `localhost`;

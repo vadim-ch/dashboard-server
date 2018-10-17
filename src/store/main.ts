@@ -1,5 +1,4 @@
-import { User } from '../entity/User';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, createQueryBuilder, Repository } from 'typeorm';
 
 export class MainStore<RepositoryType> {
   private _repository: Repository<RepositoryType>;

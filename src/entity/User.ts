@@ -4,9 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  BeforeInsert,
+  BeforeInsert, OneToOne, JoinColumn,
 } from 'typeorm';
 import { compare, hash } from 'bcrypt';
+import { Client } from './client/Client';
+import { Expert } from './expert/Expert';
+import { UserType } from '../store/user';
 
 @Entity('User')
 export class User {
@@ -26,19 +29,16 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column()
-  age: string;
-
-  @Column({
-    nullable: true
-  })
+  @Column({enum: ['expert', 'client']})
   role: string;
+
+  @OneToOne(type => Expert, expert => expert.id)
+  @JoinColumn()
+  expert: Expert;
+
+  @OneToOne(type => Client, client => client.id)
+  @JoinColumn()
+  client: Client;
 
   @Column({type: 'hstore', nullable: true})
   refreshTokenMap: object;

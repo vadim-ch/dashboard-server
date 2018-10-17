@@ -5,7 +5,6 @@ export const loginHandler = (req, res, next, accessToken, refreshToken) => {
     if (err) {
       return next(err);
     }
-
     renderDataSuccess(req, res, {
       accessToken,
       refreshToken

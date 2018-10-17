@@ -3,32 +3,16 @@ import * as passportLocal from 'passport-local';
 import { NotFoundError } from "./errors/not-found-error";
 import { AuthError } from "./errors/auth-error";
 import { expertsStore } from "./store/expert";
-import { userStore } from './store/users';
-// import {Expert} from "./store/models/expert";
+import { userStore } from './store/user';
 
 const LocalStrategy = passportLocal.Strategy;
-export const clientAuth = new passport.Passport();
-export const expertAuth = new passport.Passport();
+export const userAuth = new passport.Passport();
 
-clientAuth.serializeUser((user: any, done) => {
-  done(null, user.id);
-});
-
-clientAuth.deserializeUser((id, done) => {
-  userStore.getUserById(id as any)
-      .then(user => {
-        done(null, user);
-      })
-      .catch((err) => {
-        done(err);
-      });
-});
-
-expertAuth.serializeUser((expert: any, done) => {
+userAuth.serializeUser((expert: any, done) => {
   done(null, expert.id);
 });
 
-expertAuth.deserializeUser((id, done) => {
+userAuth.deserializeUser((id, done) => {
   expertsStore.getUserById(id as any)
       .then(expert => {
         done(null, expert);
@@ -38,43 +22,17 @@ expertAuth.deserializeUser((id, done) => {
       });
 });
 
-clientAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
-  userStore.findByEmail(email.toLowerCase())
+userAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
+  userStore.getByEmail(email.toLowerCase())
       .then(async (user) => {
+        // Expert not found
         if (!user) {
-          return done(new NotFoundError(`User "${email}" not found`), false);
+          return done(new NotFoundError(`Expert "${email}" not found`), false);
         }
-
         try {
           const isMatch = await user.comparePassword(password);
           if (isMatch) {
             return done(null, user);
-          } else {
-            return done(new AuthError(`User "${email}" incorrect password`), false);
-          }
-        } catch (err) {
-          return done(err);
-        }
-      })
-      .catch((err) => {
-        if (err) {
-          return done(err)
-        }
-      });
-}));
-
-
-expertAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
-  expertsStore.findByEmail(email.toLowerCase())
-      .then(async (expert) => {
-        // Expert not found
-        if (!expert) {
-          return done(new NotFoundError(`Expert "${email}" not found`), false);
-        }
-        try {
-          const isMatch = await expert.comparePassword(password);
-          if (isMatch) {
-            return done(null, expert);
           } else {
             return done(new AuthError(`Expert "${email}" incorrect password`), false);
           }

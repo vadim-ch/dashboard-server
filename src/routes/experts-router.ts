@@ -2,13 +2,10 @@ import {Router} from 'express';
 import {BaseRouter, IRouter} from './base-router';
 import {renderException} from '../util/data-render';
 import * as express from 'express'
-import {GetExpertById} from '../controllers/experts/get-expert';
-import {PutExpertById} from '../controllers/experts/put-expert';
-import {SigninExpert} from '../controllers/experts/signin-expert';
-import {SignupExpert} from '../controllers/experts/signup-expert';
-import {LogoutExpert} from '../controllers/experts/logout-expert';
-import {AllExperts} from '../controllers/experts/all-experts';
-import { GetCurrentExpert } from '../controllers/experts/current-expert';
+import {GetExpertById} from '../controllers/expert/get-expert';
+import {PutExpertById} from '../controllers/expert/put-expert';
+import {AllExperts} from '../controllers/expert/all-experts';
+import { GetCurrentExpert } from '../controllers/expert/current-expert';
 const router = express.Router();
 
 export class ExpertsRouter extends BaseRouter implements IRouter {
@@ -21,9 +18,6 @@ export class ExpertsRouter extends BaseRouter implements IRouter {
     router.get(`/current`, ...this.handlerRunner(new GetCurrentExpert()));
     router.get(`/:id`, ...this.handlerRunner(new GetExpertById()));
     router.put(`/:id`, ...this.handlerRunner(new PutExpertById()));
-    router.post(`/login`, ...this.handlerRunner(new SigninExpert()));
-    router.post(`/register`, ...this.handlerRunner(new SignupExpert()));
-    router.post(`/logout`, ...this.handlerRunner(new LogoutExpert()));
 
     router.use((exception, req, res, next) => {
       renderException(req, res, exception);

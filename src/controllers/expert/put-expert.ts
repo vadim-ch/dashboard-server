@@ -1,12 +1,10 @@
-import {Controller, IController} from '../';
-import {Request, Response} from 'express';
-import {renderDataSuccess} from '../../util/data-render';
-import {userStore, UserUpdateFields} from '../../store/users';
-import {NotFoundError} from "../../errors/not-found-error";
-import {checkSchema, param, validationResult} from "express-validator/check";
-import {ValidationError} from "../../errors/validation-error";
-import {SESSION_SECRET} from "../../util/env-vars";
-import {expertsStore} from "../../store/expert";
+import { Controller, IController } from '../';
+import { Request, Response } from 'express';
+import { renderDataSuccess } from '../../util/data-render';
+import { NotFoundError } from '../../errors/not-found-error';
+import { param } from 'express-validator/check';
+import { SESSION_SECRET } from '../../util/env-vars';
+import { expertsStore } from '../../store/expert';
 
 export class PutExpertById extends Controller implements IController {
   public validateRules: Array<any> = [
@@ -36,7 +34,7 @@ export class PutExpertById extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const expertId = req.params.id;
-    let updateData: UserUpdateFields = {};
+    let updateData: any = {};
     if (req.body.firstName) {
       updateData.firstName = req.body.firstName;
     }

@@ -1,14 +1,12 @@
-import {Controller, IController} from '../';
-import {Request, Response} from 'express';
-import {renderDataSuccess} from '../../util/data-render';
-import {tokenGenerator} from '../../util/token-generator';
-import {NotFoundError} from '../../errors/not-found-error';
-import {ExpertsStore} from "../../store/expert";
+import { Controller, IController } from '../';
+import { Request, Response } from 'express';
+import { renderDataSuccess } from '../../util/data-render';
+import { tokenGenerator } from '../../util/token-generator';
+import { NotFoundError } from '../../errors/not-found-error';
+import { UserStore } from '../../store/user';
 
-export class RefreshTokenExpert extends Controller implements IController {
-  public validateRules: Array<any> = [
-
-  ];
+export class RefreshToken extends Controller implements IController {
+  public validateRules: Array<any> = [];
 
   constructor() {
     super();
@@ -28,7 +26,7 @@ export class RefreshTokenExpert extends Controller implements IController {
     const decodedRefreshToken = await tokenGenerator.verifyToken(req.body.refreshToken);
     if (expert.refreshTokenMap[decodedRefreshToken['jwtid']]) {
       delete expert.refreshTokenMap[req.body.refreshToken];
-      const preparedExpert = ExpertsStore.prepareExpert(expert);
+      const preparedExpert = UserStore.prepareUser(expert);
       const newAccessToken = await tokenGenerator.makeAccessToken(preparedExpert);
       const [newRefreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(preparedExpert);
       expert.refreshTokenMap = {

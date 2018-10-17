@@ -1,7 +1,7 @@
 import {Controller, IController} from '../';
 import {Request, Response} from 'express';
 import {renderDataSuccess} from '../../util/data-render';
-import {userStore} from '../../store/users';
+import {clientStore} from '../../store/client';
 
 export class AllUsers extends Controller implements IController {
   constructor() {
@@ -9,7 +9,7 @@ export class AllUsers extends Controller implements IController {
   }
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const allExperts = await userStore.getUsers();
+    const allExperts = await clientStore.getUsers();
     renderDataSuccess(req, res, allExperts);
   }
 }

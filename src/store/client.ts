@@ -1,17 +1,16 @@
 import {AuthError} from "../errors/auth-error";
-import { User } from '../entity/User';
+import { Client } from '../entity/client/Client';
 import { MainStore } from './main';
 
 
-export interface UserType {
+interface UserType {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
 }
 
-export interface NewUserType {
+interface NewUserType {
   firstName: string;
   lastName?: string;
   age: string;
@@ -19,37 +18,36 @@ export interface NewUserType {
   password: string;
 }
 
-export type UserUpdateFields = {
+type UserUpdateFields = {
   firstName?: string;
   lastName?: string;
   role?: string;
 }
 
-export class UserStore extends MainStore<User> {
+export class ClientStore extends MainStore<Client> {
   constructor() {
-    super(User);
+    super(Client);
   }
 
-  static prepareUser(user: User): UserType {
+  static prepareUser(user: Client): UserType {
     return {
       id: user.id.toString(),
       firstName: user.firstName,
       lastName: user.lastName,
-      email: user.email,
-      role: user.role
+      email: user.email
     }
   }
 
   public async getUserById(id: string): Promise<UserType> {
     const user = await this.repository.findOne(id);
-    return UserStore.prepareUser(user);
+    return ClientStore.prepareUser(user);
   }
 
-  public async findByEmail(email: string): Promise<User> {
+  public async findByEmail(email: string): Promise<Client> {
     return await this.repository.findOne({email});
   }
 
-  public async createNewUser(data: NewUserType): Promise<User> {
+  public async createNewUser(data: NewUserType): Promise<Client> {
     const existingUser = await this.repository.findOne({email: data.email});
     if (existingUser) {
       throw new AuthError(`User "${data.email}" exist`);
@@ -61,22 +59,13 @@ export class UserStore extends MainStore<User> {
 
   public async findAndUpdateUser(id: string, fields: UserUpdateFields): Promise<UserType> {
     const updatedUser = await this.repository.update(id, fields);
-    return UserStore.prepareUser(updatedUser.raw);
+    return ClientStore.prepareUser(updatedUser.raw);
   }
 
   public async getUsers(conditions?: object): Promise<Array<UserType>> {
     const users = await this.repository.find(conditions);
-    return users.map(UserStore.prepareUser);
-  }
-
-  public async addRefreshToken(expertId: string, refreshId: string, refreshToken: string): Promise<UserType> {
-    const updatedUser = await this.repository.update(expertId, {
-      refreshTokenMap: {
-        [refreshId]: refreshToken
-      }
-    });
-    return UserStore.prepareUser(updatedUser.raw);
+    return users.map(ClientStore.prepareUser);
   }
 }
 
-export const userStore = new UserStore();
+export const clientStore = new ClientStore();

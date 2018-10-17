@@ -1,11 +1,11 @@
-import {Controller, IController} from '../';
-import {Request, Response} from 'express';
-import {renderDataSuccess} from '../../util/data-render';
-import { userStore, UserStore } from '../../store/users';
-import {NotFoundError} from '../../errors/not-found-error';
-import {SESSION_SECRET} from '../../util/env-vars';
+import { Controller, IController } from '../';
+import { Request, Response } from 'express';
+import { renderDataSuccess } from '../../util/data-render';
+import { NotFoundError } from '../../errors/not-found-error';
+import { SESSION_SECRET } from '../../util/env-vars';
+import { expertsStore } from '../../store/expert';
 
-export class GetCurrentUser extends Controller implements IController {
+export class GetCurrentExpert extends Controller implements IController {
   public validateRules: Array<any> = [];
 
   constructor() {
@@ -34,7 +34,7 @@ export class GetCurrentUser extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const userId = req.user ? req.user.sub : null;
     if (userId) {
-      const user = await userStore.getUserById(userId);
+      const user = await expertsStore.getUserById(userId);
       // const user = await userStore.getUserById(userId);
       if (!user) {
         throw new NotFoundError(`User not found`);
