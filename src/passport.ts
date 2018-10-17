@@ -27,14 +27,14 @@ userAuth.use(new LocalStrategy({usernameField: 'email'}, (email, password, done)
       .then(async (user) => {
         // Expert not found
         if (!user) {
-          return done(new NotFoundError(`Expert "${email}" not found`), false);
+          return done(new NotFoundError(`User "${email}" not found`), false);
         }
         try {
           const isMatch = await user.comparePassword(password);
           if (isMatch) {
             return done(null, user);
           } else {
-            return done(new AuthError(`Expert "${email}" incorrect password`), false);
+            return done(new AuthError(`User "${email}" incorrect password`), false);
           }
         } catch (err) {
           return done(err);
