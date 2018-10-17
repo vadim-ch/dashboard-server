@@ -1,17 +1,20 @@
-import { AuthError } from '../errors/auth-error';
 import { Expert } from '../entity/expert/Expert';
 import { MainStore } from './main';
-import { getRepository } from 'typeorm';
-import { Cabinet } from '../entity/expert/Cabinet';
+import { UpdateResult } from 'typeorm';
+import { NotFoundError } from '../errors/not-found-error';
 
 export interface ExpertType {
   id: string;
   firstName: string;
   lastName: string;
+  middleName: string;
+  age: string;
+  hours: string;
+  userId: string;
   // email: string;
-  role: string;
-  createdDate: Date;
-  updatedDate: Date;
+
+  // createdDate: Date;
+  // updatedDate: Date;
 }
 
 export interface NewExpertType {
@@ -37,17 +40,23 @@ export class ExpertsStore extends MainStore<Expert> {
       id: String(user.id),
       firstName: user.firstName,
       lastName: user.lastName,
+      middleName: user.middleName,
+      age: user.age,
+      hours: user.hours,
+      userId: user.userId
       // email: user.email,
-      role: 'temp',
-      createdDate: user.createdDate,
-      updatedDate: user.updatedDate
+      // createdDate: user.createdDate,
+      // updatedDate: user.updatedDate
     }
   }
 
   public async getUserById(id: string): Promise<ExpertType> {
-    // const user = await this.model.findById(id);
-    const user = await this.repository.findOne(id);
-    return ExpertsStore.prepareExpert(user);
+    try {
+      const user = await this.repository.findOne(id);
+      return ExpertsStore.prepareExpert(user);
+    } catch (e) {
+      throw new NotFoundError(`User not found`);
+    }
   }
 
   // public async findByEmail(email: string): Promise<Expert> {
@@ -60,9 +69,12 @@ export class ExpertsStore extends MainStore<Expert> {
     return expert;
   }
 
-  public async findAndUpdateExpert(id: string, fields: ExpertUpdateFields): Promise<ExpertType> {
-    const updatedExpert = await this.repository.update(id, fields);
-    return ExpertsStore.prepareExpert(updatedExpert.raw);
+  public async findAndUpdateExpert(id: string, fields: ExpertUpdateFields): Promise<UpdateResult> {
+    try {
+      return await this.repository.update(id, fields);
+    } catch (e) {
+      throw new NotFoundError(`Expert '${id}' not found`);
+    }
   }
 
   public async getExperts(conditions?: object): Promise<Array<ExpertType>> {

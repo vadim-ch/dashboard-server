@@ -9,6 +9,7 @@ import { expertsStore, NewExpertType } from './expert';
 export interface UserType {
   id: string;
   email: string;
+  expertId: string;
 }
 
 export interface NewUserType {
@@ -21,37 +22,40 @@ export class UserStore extends MainStore<User> {
     super(User);
   }
 
-  static prepareUser(user: User): UserType {
+  static prepareUser(user: User, expertId?: string): UserType {
     return {
-      id: user.id.toString(),
-      email: user.email
+      id: user.id,
+      email: user.email,
+      expertId
     }
   }
 
-  public async getById(id: string): Promise<UserType> {
-    const user = await this.repository.findOne(id);
-    return UserStore.prepareUser(user);
-  }
+  // public async getById(id: string): Promise<UserType> {
+  //   const user = await this.repository.findOne(id);
+  //   return UserStore.prepareUser(user);
+  // }
 
   public async getByEmail(email: string): Promise<User> {
     return await this.repository.findOne({email});
   }
-
-  public async createNew(data: NewUserType, role: string = 'client'): Promise<User> {
-    const existingUser = await this.repository.findOne({email: data.email});
-    if (existingUser) {
-      throw new AuthError(`User '${data.email}' exist`);
-    }
-    const user = this.repository.create({...data, role});
-    await this.repository.save(user);
-    return user;
+  public async getExpertByUserId(userId: string): Promise<User> {
+    return await this.repository.findOne(userId, {relations: ['expert']});
   }
 
-  public async createNewExpert(data: NewUserType, expertData: NewExpertType): Promise<User> {
+  public async createNewClient(data: NewUserType, clientData?: NewExpertType): Promise<UserType> {
+    const user = await this.createNew(data);
+    // const expert = await expertsStore.createNew(expertData);
+    // user.expert = expert;
+    // await this.repository.save(user);
+    return UserStore.prepareUser(user);
+  }
+
+  public async createNewExpert(data: NewUserType, expertData: NewExpertType): Promise<UserType> {
     const user = await this.createNew(data, 'expert');
-    user.expert = await expertsStore.createNew(expertData);
+    const expert = await expertsStore.createNew(expertData);
+    user.expert = expert;
     await this.repository.save(user);
-    return user;
+    return UserStore.prepareUser(user, expert.id);
   }
 
   public async addRefreshToken(userId: string, refreshId: string, refreshToken: string): Promise<UpdateResult> {
@@ -60,6 +64,16 @@ export class UserStore extends MainStore<User> {
         [refreshId]: refreshToken
       }
     });
+  }
+
+  private async createNew(data: NewUserType, role: string = 'client'): Promise<User> {
+    const existingUser = await this.repository.findOne({email: data.email});
+    if (existingUser) {
+      throw new AuthError(`User '${data.email}' exist`);
+    }
+    const user = this.repository.create({...data, role});
+    await this.repository.save(user);
+    return user;
   }
 }
 

@@ -42,7 +42,7 @@ export class Signup extends Controller implements IController {
           middleName: 'middle',
           age: '28'
         }) :
-        await userStore.createNew(newUserData);
+        await userStore.createNewClient(newUserData);
     const accessToken = await tokenGenerator.makeAccessToken(rawUser);
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(rawUser);
     await userStore.addRefreshToken(rawUser.id, refreshUuid, refreshToken);

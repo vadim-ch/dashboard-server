@@ -1,18 +1,23 @@
 import { Controller, IController } from '../';
 import { Request, Response } from 'express';
 import { renderDataSuccess } from '../../util/data-render';
-import { NotFoundError } from '../../errors/not-found-error';
 import { param } from 'express-validator/check';
 import { SESSION_SECRET } from '../../util/env-vars';
 import { expertsStore } from '../../store/expert';
+import { paramUserIdField } from '../helper';
+import { UserCheckerType } from '../index';
+
+const checkUserRules: UserCheckerType = {
+  paramUserIdField,
+};
 
 export class PutExpertById extends Controller implements IController {
   public validateRules: Array<any> = [
-    param('id').isString().isBase64().isLength({min: 5}),
+    param(paramUserIdField).isString().isLength({min: 5}),
   ];
 
   constructor() {
-    super(SESSION_SECRET);
+    super(SESSION_SECRET, checkUserRules);
   }
 
   public validate(req: Request, res: Response, next): void {
@@ -33,7 +38,7 @@ export class PutExpertById extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const expertId = req.params.id;
+    const expertId = req.params.userId;
     let updateData: any = {};
     if (req.body.firstName) {
       updateData.firstName = req.body.firstName;
@@ -41,10 +46,16 @@ export class PutExpertById extends Controller implements IController {
     if (req.body.lastName) {
       updateData.lastName = req.body.lastName;
     }
-    const expert = await expertsStore.findAndUpdateExpert(expertId, updateData);
-    if (!expert) {
-      throw new NotFoundError(`Expert '${expertId}' not found`);
+    if (req.body.middleName) {
+      updateData.middleName = req.body.middleName;
     }
-    renderDataSuccess(req, res, expert);
+    if (req.body.age) {
+      updateData.age = req.body.age;
+    }
+    if (req.body.hours) {
+      updateData.hours = req.body.hours;
+    }
+    await expertsStore.findAndUpdateExpert(expertId, updateData);
+    renderDataSuccess(req, res, {});
   }
 }

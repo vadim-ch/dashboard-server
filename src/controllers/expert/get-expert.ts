@@ -4,10 +4,11 @@ import { renderDataSuccess } from '../../util/data-render';
 import { NotFoundError } from '../../errors/not-found-error';
 import { param } from 'express-validator/check';
 import { expertsStore } from '../../store/expert';
+import { paramUserIdField } from '../helper';
 
 export class GetExpertById extends Controller implements IController {
   public validateRules: Array<any> = [
-    param('id').isString().isLength({min: 5}),
+    param(paramUserIdField).isString().isLength({min: 5}),
   ];
 
   constructor() {
@@ -15,7 +16,7 @@ export class GetExpertById extends Controller implements IController {
   }
 
   public validate(req: Request, res: Response, next): void {
-    const userId = req.params.id;
+    // const { userId } = req.params;
     // req['check']({
     //   id: {
     //     // The location of the field, can be one or more of body, cookies, headers, params or query.
@@ -34,10 +35,10 @@ export class GetExpertById extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const expertId = req.params.id;
-    const expert = await expertsStore.getUserById(expertId);
+    const {userId} = req.params;
+    const expert = await expertsStore.getUserById(userId);
     if (!expert) {
-      throw new NotFoundError(`Expert '${expertId}' not found`);
+      throw new NotFoundError(`Expert '${userId}' not found`);
     }
     renderDataSuccess(req, res, expert);
   }

@@ -4,6 +4,7 @@ import { renderDataSuccess } from '../../util/data-render';
 import { NotFoundError } from '../../errors/not-found-error';
 import { SESSION_SECRET } from '../../util/env-vars';
 import { expertsStore } from '../../store/expert';
+import { userStore } from '../../store/user';
 
 export class GetCurrentExpert extends Controller implements IController {
   public validateRules: Array<any> = [];
@@ -32,14 +33,10 @@ export class GetCurrentExpert extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const userId = req.user ? req.user.sub : null;
-    if (userId) {
-      const user = await expertsStore.getUserById(userId);
-      // const user = await userStore.getUserById(userId);
-      if (!user) {
-        throw new NotFoundError(`User not found`);
-      }
-      renderDataSuccess(req, res, user);
-    }
+    const expertId = req.user ? req.user.expertId : null;
+    const user = await expertsStore.getUserById(expertId);
+    // рабочий вариант. разница в том что делается join
+    // const user = await userStore.getExpertByUserId(req.user.sub);
+    renderDataSuccess(req, res, user);
   }
 }

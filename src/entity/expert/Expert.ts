@@ -4,18 +4,23 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
-  OneToOne,
-  JoinColumn
+  OneToMany, OneToOne, JoinColumn,
 } from 'typeorm';
 import { Cabinet } from './Cabinet';
-import { User } from '../User';
+import { Client } from '../client/Client';
 
 @Entity('Expert')
 export class Expert {
 
   @PrimaryGeneratedColumn("uuid")
   id: string;
+
+  @Column({ nullable: true })
+  userId: string;
+
+  @OneToOne(type => (Expert || Client))
+  @JoinColumn()
+  user: string;
 
   @CreateDateColumn()
   createdDate: Date;
