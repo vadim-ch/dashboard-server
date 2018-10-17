@@ -33,10 +33,10 @@ export class GetCurrentExpert extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const expertId = req.user ? req.user.expertId : null;
-    const user = await expertsStore.getUserById(expertId);
+    const userId = req.user ? req.user.sub : null;
+    // const user = await expertsStore.getUserById(userId);
     // рабочий вариант. разница в том что делается join
     // const user = await userStore.getExpertByUserId(req.user.sub);
-    renderDataSuccess(req, res, user);
+    renderDataSuccess(req, res, {});
   }
 }

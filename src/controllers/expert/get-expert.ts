@@ -1,7 +1,6 @@
 import { Controller, IController } from '../';
 import { Request, Response } from 'express';
 import { renderDataSuccess } from '../../util/data-render';
-import { NotFoundError } from '../../errors/not-found-error';
 import { param } from 'express-validator/check';
 import { expertsStore } from '../../store/expert';
 import { paramUserIdField } from '../helper';
@@ -35,11 +34,8 @@ export class GetExpertById extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const {userId} = req.params;
-    const expert = await expertsStore.getUserById(userId);
-    if (!expert) {
-      throw new NotFoundError(`Expert '${userId}' not found`);
-    }
+    const {expertId} = req.params;
+    const expert = await expertsStore.getUserById(expertId);
     renderDataSuccess(req, res, expert);
   }
 }

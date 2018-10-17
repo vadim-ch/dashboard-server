@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Cabinet } from './Cabinet';
 import { Client } from '../client/Client';
+import {User} from "../User";
 
 @Entity('Expert')
 export class Expert {
@@ -18,9 +19,9 @@ export class Expert {
   @Column({ nullable: true })
   userId: string;
 
-  @OneToOne(type => (Expert || Client))
+  @OneToOne(type => User, user => user.expert)
   @JoinColumn()
-  user: string;
+  user: User;
 
   @CreateDateColumn()
   createdDate: Date;

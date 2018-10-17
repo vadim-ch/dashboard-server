@@ -50,9 +50,9 @@ export class ExpertsStore extends MainStore<Expert> {
     }
   }
 
-  public async getUserById(id: string): Promise<ExpertType> {
+  public async getUserById(expertId: string): Promise<ExpertType> {
     try {
-      const user = await this.repository.findOne(id);
+      const user = await this.repository.findOneOrFail(expertId);
       return ExpertsStore.prepareExpert(user);
     } catch (e) {
       throw new NotFoundError(`User not found`);
@@ -69,11 +69,14 @@ export class ExpertsStore extends MainStore<Expert> {
     return expert;
   }
 
-  public async findAndUpdateExpert(id: string, fields: ExpertUpdateFields): Promise<UpdateResult> {
+  public async findAndUpdateExpert(userId: string, expertId: string, fields: ExpertUpdateFields): Promise<Expert> {
     try {
-      return await this.repository.update(id, fields);
+      // const updateResult = await this.repository.update({id: expertId, userId}, fields);
+      const expert = await this.repository.findOneOrFail({id: expertId, userId});
+      const newExpert = {...expert, ...fields};
+      return await this.repository.save(newExpert);
     } catch (e) {
-      throw new NotFoundError(`Expert '${id}' not found`);
+      throw new NotFoundError(`Expert '${expertId}' not found`);
     }
   }
 

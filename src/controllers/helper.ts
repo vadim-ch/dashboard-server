@@ -1,6 +1,6 @@
 import {renderDataSuccess} from '../util/data-render';
 
-export const paramUserIdField = 'userId';
+export const paramUserIdField = 'expertId';
 
 export const loginHandler = (req, res, next, accessToken, refreshToken) => {
   return async (err) => {

@@ -13,7 +13,7 @@ userAuth.serializeUser((expert: any, done) => {
 });
 
 userAuth.deserializeUser((id, done) => {
-  expertsStore.getUserById(id as any)
+    userStore.getById(id as any)
       .then(expert => {
         done(null, expert);
       })

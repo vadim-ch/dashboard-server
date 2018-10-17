@@ -32,12 +32,10 @@ export class User {
   @Column({enum: ['expert', 'client']})
   role: string;
 
-  @OneToOne(type => Expert, expert => expert.id)
-  @JoinColumn()
+  @OneToOne(type => Expert, expert => expert.user)
   expert: Expert;
 
-  @OneToOne(type => Client, client => client.id)
-  @JoinColumn()
+  @OneToOne(type => Client, client => client.user)
   client: Client;
 
   @Column({type: 'hstore', nullable: true})

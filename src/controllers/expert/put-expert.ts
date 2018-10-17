@@ -17,11 +17,11 @@ export class PutExpertById extends Controller implements IController {
   ];
 
   constructor() {
-    super(SESSION_SECRET, checkUserRules);
+    super(SESSION_SECRET);
   }
 
   public validate(req: Request, res: Response, next): void {
-    const userId = req.params.id;
+    // const userId = req.params.id;
     // req['check']({
     //   id: {
     //     // The location of the field, can be one or more of body, cookies, headers, params or query.
@@ -38,7 +38,8 @@ export class PutExpertById extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const expertId = req.params.userId;
+    const authUserId = req.user.sub;
+    const {expertId} = req.params;
     let updateData: any = {};
     if (req.body.firstName) {
       updateData.firstName = req.body.firstName;
@@ -55,7 +56,7 @@ export class PutExpertById extends Controller implements IController {
     if (req.body.hours) {
       updateData.hours = req.body.hours;
     }
-    await expertsStore.findAndUpdateExpert(expertId, updateData);
-    renderDataSuccess(req, res, {});
+    const expert = await expertsStore.findAndUpdateExpert(authUserId, expertId, updateData);
+    renderDataSuccess(req, res, expert);
   }
 }

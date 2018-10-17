@@ -30,10 +30,10 @@ export class UserStore extends MainStore<User> {
     }
   }
 
-  // public async getById(id: string): Promise<UserType> {
-  //   const user = await this.repository.findOne(id);
-  //   return UserStore.prepareUser(user);
-  // }
+  public async getById(id: string): Promise<UserType> {
+    const user = await this.repository.findOne(id);
+    return UserStore.prepareUser(user);
+  }
 
   public async getByEmail(email: string): Promise<User> {
     return await this.repository.findOne({email});

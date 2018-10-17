@@ -15,6 +15,13 @@ export class Client {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({ nullable: true })
+  userId: string;
+
+  @OneToOne(type => User, user => user.client)
+  @JoinColumn()
+  user: User;
+
   @CreateDateColumn()
   createdDate: Date;
 
