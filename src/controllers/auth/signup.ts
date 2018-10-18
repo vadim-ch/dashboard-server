@@ -5,6 +5,7 @@ import { loginHandler } from "../helper";
 import { expertsStore } from "../../store/expert";
 import { tokenGenerator } from "../../util/token-generator";
 import { userStore } from '../../store/user';
+import { GenderEnum } from '../../entity/expert/Expert';
 
 const RegisterType = {
   Client: 'client',
@@ -40,7 +41,8 @@ export class Signup extends Controller implements IController {
           firstName: 'first',
           lastName: 'last',
           middleName: 'middle',
-          age: '28'
+          birthday: new Date(),
+          gender: GenderEnum.Male
         }) :
         await userStore.createNewClient(newUserData);
     const accessToken = await tokenGenerator.makeAccessToken(rawUser);

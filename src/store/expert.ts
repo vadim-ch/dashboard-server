@@ -1,4 +1,4 @@
-import { Expert } from '../entity/expert/Expert';
+import { Expert, GenderEnum } from '../entity/expert/Expert';
 import { MainStore } from './main';
 import { UpdateResult } from 'typeorm';
 import { NotFoundError } from '../errors/not-found-error';
@@ -8,8 +8,8 @@ export interface ExpertType {
   firstName: string;
   lastName: string;
   middleName: string;
-  age: string;
-  hours: string;
+  birthday: Date;
+  gender: string;
   userId: string;
   // email: string;
 
@@ -21,7 +21,8 @@ export interface NewExpertType {
   firstName: string;
   lastName: string;
   middleName: string;
-  age: string;
+  birthday: Date;
+  gender: GenderEnum;
 }
 
 export type ExpertUpdateFields = {
@@ -36,18 +37,19 @@ export class ExpertsStore extends MainStore<Expert> {
   }
 
   static prepareExpert(user: Expert): ExpertType {
-    return {
-      id: String(user.id),
-      firstName: user.firstName,
-      lastName: user.lastName,
-      middleName: user.middleName,
-      age: user.age,
-      hours: user.hours,
-      userId: user.userId
-      // email: user.email,
-      // createdDate: user.createdDate,
-      // updatedDate: user.updatedDate
-    }
+    // return {
+    //   id: String(user.id),
+    //   firstName: user.firstName,
+    //   lastName: user.lastName,
+    //   middleName: user.middleName,
+    //   birthday: user.birthday,
+    //   gender: user.gender,
+    //   userId: user.userId
+    //   // email: user.email,
+    //   // createdDate: user.createdDate,
+    //   // updatedDate: user.updatedDate
+    // }
+    return user;
   }
 
   public async getUserById(expertId: string): Promise<ExpertType> {
@@ -76,7 +78,7 @@ export class ExpertsStore extends MainStore<Expert> {
       const newExpert = {...expert, ...fields};
       return await this.repository.save(newExpert);
     } catch (e) {
-      throw new NotFoundError(`Expert '${expertId}' not found`);
+      throw new NotFoundError(`Expert '${expertId}' not found, ${e}`);
     }
   }
 

@@ -50,11 +50,17 @@ export class PutExpertById extends Controller implements IController {
     if (req.body.middleName) {
       updateData.middleName = req.body.middleName;
     }
-    if (req.body.age) {
-      updateData.age = req.body.age;
+    if (req.body.birthday) {
+      updateData.birthday = req.body.birthday;
     }
-    if (req.body.hours) {
-      updateData.hours = req.body.hours;
+    if (req.body.gender) {
+      updateData.gender = req.body.gender;
+    }
+    if (req.body.qualifications) {
+      console.error(req.body.qualifications);
+      console.error(typeof req.body.qualifications);
+      console.error(JSON.parse(req.body.qualifications));
+      updateData.qualifications = JSON.parse(req.body.qualifications);
     }
     const expert = await expertsStore.findAndUpdateExpert(authUserId, expertId, updateData);
     renderDataSuccess(req, res, expert);

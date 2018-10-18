@@ -8,15 +8,27 @@ import {
 } from 'typeorm';
 import { Cabinet } from './Cabinet';
 import { Client } from '../client/Client';
-import {User} from "../User";
+import { User } from "../User";
 
-@Entity('Expert')
+export enum GenderEnum {
+  Male = 'male',
+  Female = 'female'
+}
+
+export enum QualificationEnum {
+  Psychologist = 'psychologist', // Психолог
+  Psychotherapist = 'psychotherapist', // Психотерапевт
+  Psychiatrist = 'psychiatrist', // Психиатр
+  Psychoanalyst = 'psychoanalyst' // Психоаналитик
+}
+
+@Entity()
 export class Expert {
 
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ nullable: true })
+  @Column({nullable: true})
   userId: string;
 
   @OneToOne(type => User, user => user.expert)
@@ -29,6 +41,8 @@ export class Expert {
   @UpdateDateColumn()
   updatedDate: Date;
 
+  /**  Персональная информация
+   */
   @Column()
   firstName: string;
 
@@ -38,12 +52,39 @@ export class Expert {
   @Column()
   lastName: string;
 
-  @Column()
-  age: string;
+  @Column({type: 'date', nullable: true})
+  birthday: Date;
+
+  @Column({type: 'enum', enum: GenderEnum, nullable: true})
+  gender: GenderEnum;
 
   @Column({nullable: true})
-  hours: string;
+  location: string; // TODO нужен будет json городов россии https://github.com/asakasinsky/russia.json
 
+  /**  Настройки сессий
+   * время сессий
+   * адреса проведения сессий
+   *
+   */
+  @Column({nullable: true})
+  sessionTime: string;
+
+  @Column({nullable: true})
+  sessionPrice: string;
+
+  /**  Квалификация
+   */
+  @Column({type: 'enum', enum: QualificationEnum, array: true, nullable: true})
+  qualifications: QualificationEnum[];
+
+  // @Column({nullable: true})
+  // education: string[];
+
+  @Column({nullable: true})
+  description: string;
+
+  /**  Кабинеты
+   */
   @OneToMany(type => Cabinet, cabinet => cabinet.owner)
   cabinets: Cabinet[];
 }

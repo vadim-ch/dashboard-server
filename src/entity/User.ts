@@ -11,7 +11,7 @@ import { Client } from './client/Client';
 import { Expert } from './expert/Expert';
 import { UserType } from '../store/user';
 
-@Entity('User')
+@Entity()
 export class User {
 
   @PrimaryGeneratedColumn("uuid")

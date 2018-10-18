@@ -3,7 +3,7 @@ export const config = {
     access: {
       type: 'TOKEN_TYPE_ACCESS',
       secret: '908df97bf897gdf8bdf87dbcvbidfjgklrjt84',
-      expiresIn: '10m'
+      expiresIn: '10h'
     },
     refresh: {
       type: 'TOKEN_TYPE_REFRESH',

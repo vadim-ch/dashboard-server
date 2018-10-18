@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Expert } from './Expert';
 
-@Entity('Cabinet')
+@Entity()
 export class Cabinet {
 
   @PrimaryGeneratedColumn("uuid")
@@ -19,9 +19,7 @@ export class Cabinet {
   @UpdateDateColumn()
   updatedDate: Date;
 
-  @ManyToOne(type => Expert, expert => expert.cabinets, {
-    cascade: true
-  })
+  @ManyToOne(type => Expert, expert => expert.cabinets, {cascade: true})
   owner: Expert;
 
   @Column()
