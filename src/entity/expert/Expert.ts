@@ -4,11 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany, OneToOne, JoinColumn,
+  OneToMany, OneToOne, JoinColumn, ManyToOne, ManyToMany, JoinTable,
 } from 'typeorm';
-import { Cabinet } from './Cabinet';
-import { Client } from '../client/Client';
-import { User } from "../User";
+import {Cabinet} from './Cabinet';
+import {Client} from '../client/Client';
+import {User} from "../User";
+import {MethodsTherapy} from "./MethodsTherapy";
 
 export enum GenderEnum {
   Male = 'male',
@@ -26,6 +27,12 @@ export enum SessionFormatEnum {
   Meeting = 'meeting', // Очная встреча
   Video = 'video', // Видео связь
   Audio = 'audio', // Аудио связь
+}
+
+export enum DirectionsTherapyEnum {
+  FamilyTherapy = 'family-therapy', // Семейнвя терапия
+  IndividualTherapy = 'individual-therapy', // Индивидуальная терапия
+  GroupTherapy = 'group-therapy', // Групповая терапия
 }
 
 @Entity()
@@ -129,20 +136,24 @@ export class Expert {
   /**
    * Часы личной терапии
    */
-
-  /**
-   * Запросы с которыми работаю
-   */
+  @Column({nullable: true})
+  ownTherapyHours: number;
 
   /**
    * Направление работы
    * индивидуальные/семейные/групповые
    */
+  @Column({type: 'enum', enum: DirectionsTherapyEnum, array: true, nullable: true})
+  directionsTherapy: DirectionsTherapyEnum[];
 
   /**
    * Методика работы
    * Арт/телесно...
    */
+  @ManyToMany(type => MethodsTherapy, method => method.id)
+  @JoinTable()
+  methodsTherapy: MethodsTherapy;
+
 
   /**
    * Запросы с которыми работаю

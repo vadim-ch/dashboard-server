@@ -35,7 +35,7 @@ export class GetExpertById extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const {expertId} = req.params;
-    const expert = await expertsStore.getUserById(expertId);
+    const expert = await expertsStore.getExpert(expertId);
     renderDataSuccess(req, res, expert);
   }
 }

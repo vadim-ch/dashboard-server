@@ -52,9 +52,9 @@ export class ExpertsStore extends MainStore<Expert> {
     return user;
   }
 
-  public async getUserById(expertId: string): Promise<ExpertType> {
+  public async getExpert(expertId: string): Promise<ExpertType> {
     try {
-      const user = await this.repository.findOneOrFail(expertId);
+      const user = await this.repository.findOneOrFail(expertId, {relations: ['methodsTherapy']});
       return ExpertsStore.prepareExpert(user);
     } catch (e) {
       throw new NotFoundError(`User not found`);

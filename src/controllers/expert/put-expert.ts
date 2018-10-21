@@ -62,6 +62,7 @@ export class PutExpertById extends Controller implements IController {
       console.error(JSON.parse(req.body.qualifications));
       updateData.qualifications = JSON.parse(req.body.qualifications);
     }
+    // updateData.methodsTherapy = [{id: 1}];
     const expert = await expertsStore.findAndUpdateExpert(authUserId, expertId, updateData);
     renderDataSuccess(req, res, expert);
   }

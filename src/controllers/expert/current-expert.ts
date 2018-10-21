@@ -1,10 +1,7 @@
 import { Controller, IController } from '../';
 import { Request, Response } from 'express';
 import { renderDataSuccess } from '../../util/data-render';
-import { NotFoundError } from '../../errors/not-found-error';
 import { SESSION_SECRET } from '../../util/env-vars';
-import { expertsStore } from '../../store/expert';
-import { userStore } from '../../store/user';
 
 export class GetCurrentExpert extends Controller implements IController {
   public validateRules: Array<any> = [];
