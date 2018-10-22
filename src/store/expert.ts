@@ -61,6 +61,15 @@ export class ExpertsStore extends MainStore<Expert> {
     }
   }
 
+  public async getExpertByUserId(userId: string): Promise<ExpertType> {
+    try {
+      const user = await this.repository.findOneOrFail({userId});
+      return ExpertsStore.prepareExpert(user);
+    } catch (e) {
+      throw new NotFoundError(`User not found`);
+    }
+  }
+
   // public async findByEmail(email: string): Promise<Expert> {
   //   return await this.repository.findOne({email});
   // }

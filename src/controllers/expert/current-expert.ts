@@ -2,6 +2,7 @@ import { Controller, IController } from '../';
 import { Request, Response } from 'express';
 import { renderDataSuccess } from '../../util/data-render';
 import { SESSION_SECRET } from '../../util/env-vars';
+import { expertsStore } from '../../store/expert';
 
 export class GetCurrentExpert extends Controller implements IController {
   public validateRules: Array<any> = [];
@@ -30,10 +31,10 @@ export class GetCurrentExpert extends Controller implements IController {
 
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    const userId = req.user ? req.user.sub : null;
+    const authUserId = req.user ? req.user.sub : null;
     // const user = await expertsStore.getUserById(userId);
     // рабочий вариант. разница в том что делается join
-    // const user = await userStore.getExpertByUserId(req.user.sub);
-    renderDataSuccess(req, res, {});
+    const expert = await expertsStore.getExpertByUserId(authUserId);
+    renderDataSuccess(req, res, expert);
   }
 }
