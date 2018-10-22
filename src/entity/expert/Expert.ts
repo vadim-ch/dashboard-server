@@ -10,6 +10,8 @@ import {Cabinet} from './Cabinet';
 import {Client} from '../client/Client';
 import {User} from "../User";
 import {MethodsTherapy} from "./MethodsTherapy";
+import {RequestsTherapy} from "./RequestsTherapy";
+import {ApproachesTherapy} from "./ApproachesTherapy";
 
 export enum GenderEnum {
   Male = 'male',
@@ -147,7 +149,14 @@ export class Expert {
   directionsTherapy: DirectionsTherapyEnum[];
 
   /**
-   * Методика работы
+   * Подходы
+   */
+  @ManyToMany(type => ApproachesTherapy, method => method.id)
+  @JoinTable()
+  approachesTherapy: ApproachesTherapy;
+
+  /**
+   * Дополнительные методы
    * Арт/телесно...
    */
   @ManyToMany(type => MethodsTherapy, method => method.id)
@@ -156,9 +165,12 @@ export class Expert {
 
 
   /**
-   * Запросы с которыми работаю
+   * Приоритетные запросы
    * тревога/кризис/одиночество
    */
+  @ManyToMany(type => RequestsTherapy, method => method.id)
+  @JoinTable()
+  requestsTherapy: RequestsTherapy;
 
   /**
    * Кабинеты

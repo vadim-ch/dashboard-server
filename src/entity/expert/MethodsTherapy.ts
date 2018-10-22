@@ -29,7 +29,7 @@ export class MethodsTherapy {
   @UpdateDateColumn()
   updatedDate: Date;
 
-  @Column({type: 'enum', enum: MethodsTherapyEnum, nullable: true})
+  @Column({type: 'enum', enum: MethodsTherapyEnum})
   name: string;
 
   @Column()
