@@ -19,6 +19,7 @@ export class BaseRouter {
       controller.checkAuth,
       controller.validateRules,
       controller.checkCurrentUser,
+      ...controller.beforeRequest,
       asyncHandler(async(req: Request, res: Response, next: (data?: any) => void) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

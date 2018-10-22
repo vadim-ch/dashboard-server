@@ -19,6 +19,7 @@ export interface IController {
 export class Controller {
   private secret: string;
   private checkUserRules: UserCheckerType;
+  public beforeRequest: Array<any> = [];
   public validateRules: Array<any> = [];
 
   constructor(secret?: string, checkUserRules?: UserCheckerType) {

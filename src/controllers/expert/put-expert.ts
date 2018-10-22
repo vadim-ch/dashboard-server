@@ -6,12 +6,17 @@ import { SESSION_SECRET } from '../../util/env-vars';
 import { expertsStore } from '../../store/expert';
 import { paramUserIdField } from '../helper';
 import { UserCheckerType } from '../index';
+var multer  = require('multer');
+var upload = multer({ dest: 'uploads/' });
 
 const checkUserRules: UserCheckerType = {
   paramUserIdField,
 };
 
 export class PutExpertById extends Controller implements IController {
+  public beforeRequest: Array<any> = [
+    upload.single('avatar')
+  ];
   public validateRules: Array<any> = [
     param(paramUserIdField).isString().isLength({min: 5}),
   ];
@@ -19,23 +24,6 @@ export class PutExpertById extends Controller implements IController {
   constructor() {
     super(SESSION_SECRET);
   }
-
-  public validate(req: Request, res: Response, next): void {
-    // const userId = req.params.id;
-    // req['check']({
-    //   id: {
-    //     // The location of the field, can be one or more of body, cookies, headers, params or query.
-    //     // If omitted, all request locations will be checked
-    //     in: ['params'],
-    //     errorMessage: 'ID is wrong',
-    //     isInt: true,
-    //     // Sanitizers can go here as well
-    //     toInt: true,
-    //     isLength: {options: {min: 1, max: 3}}
-    //   },
-    // })
-  }
-
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const authUserId = req.user.sub;
