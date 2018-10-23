@@ -75,6 +75,12 @@ export class Expert {
   lastName: string;
 
   /**
+   * Аватар
+   */
+  @Column({nullable: true})
+  avatar: string;
+
+  /**
    * Обо мне
    */
   @Column({nullable: true})

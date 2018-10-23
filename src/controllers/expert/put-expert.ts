@@ -1,17 +1,25 @@
 import { Controller, IController } from '../';
 import { Request, Response } from 'express';
+import * as path from 'path';
 import { renderDataSuccess } from '../../util/data-render';
 import { param } from 'express-validator/check';
 import { SESSION_SECRET } from '../../util/env-vars';
 import { expertsStore } from '../../store/expert';
 import { paramUserIdField } from '../helper';
 import { UserCheckerType } from '../index';
-var multer  = require('multer');
-var upload = multer({ dest: 'uploads/' });
+import * as multer from 'multer';
 
-const checkUserRules: UserCheckerType = {
-  paramUserIdField,
-};
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './public/avatars');
+  },
+  filename: (req, file, cb) => {
+    const authUserId = req.user.sub;
+    cb(null, `${authUserId}${path.extname(file.originalname)}`);
+  }
+});
+
+const upload = multer({storage}); // TODO добавить валидацию файлов
 
 export class PutExpertById extends Controller implements IController {
   public beforeRequest: Array<any> = [
@@ -45,10 +53,10 @@ export class PutExpertById extends Controller implements IController {
       updateData.gender = req.body.gender;
     }
     if (req.body.qualifications) {
-      console.error(req.body.qualifications);
-      console.error(typeof req.body.qualifications);
-      console.error(JSON.parse(req.body.qualifications));
-      updateData.qualifications = JSON.parse(req.body.qualifications);
+      updateData.qualifications = req.body.qualifications;
+    }
+    if (req.file) {
+      updateData.avatar = req.file.filename
     }
     // updateData.methodsTherapy = [{id: 1}];
     const expert = await expertsStore.findAndUpdateExpert(authUserId, expertId, updateData);
