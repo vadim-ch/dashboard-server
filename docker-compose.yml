@@ -1,19 +1,22 @@
-version: "3.3"
+version: '3.3'
 services:
   app:
     container_name: concordia
     restart: on-failure
-    depends_on:
-      - db
     build: .
     ports:
-      - "3000:3000"
-    networks:
-      - db-net
-  db:
-    image: mongo
-    restart: on-failure
-    networks:
-      - db-net
-networks:
-  db-net:
+    - '3000:3000'
+    env_file:
+    - .env
+    links:
+    - database
+    command: ['npm', 'start']
+  database:
+    image: postgres:10.5-alpine
+    ports:
+    - '11543:5432'
+    volumes:
+    - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    - database-data:/var/lib/postgresql/data
+volumes:
+  database-data: {}
