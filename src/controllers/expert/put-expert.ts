@@ -36,24 +36,25 @@ export class PutExpertById extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const authUserId = req.user.sub;
     const {expertId} = req.params;
+    const requestData = req.body;
     let updateData: any = {};
-    if (req.body.firstName) {
-      updateData.firstName = req.body.firstName;
+    if (requestData.firstName) {
+      updateData.firstName = requestData.firstName;
     }
-    if (req.body.lastName) {
-      updateData.lastName = req.body.lastName;
+    if (requestData.lastName) {
+      updateData.lastName = requestData.lastName;
     }
-    if (req.body.middleName) {
-      updateData.middleName = req.body.middleName;
+    if (requestData.middleName) {
+      updateData.middleName = requestData.middleName;
     }
-    if (req.body.birthday) {
-      updateData.birthday = req.body.birthday;
+    if (requestData.birthday) {
+      updateData.birthday = requestData.birthday;
     }
-    if (req.body.gender) {
-      updateData.gender = req.body.gender;
+    if (requestData.gender) {
+      updateData.gender = requestData.gender;
     }
-    if (req.body.qualifications) {
-      updateData.qualifications = req.body.qualifications;
+    if (requestData.qualifications) {
+      updateData.qualifications = requestData.qualifications;
     }
     if (req.file) {
       updateData.avatar = req.file.filename
