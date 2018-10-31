@@ -1,7 +1,8 @@
 module.exports = {
   apps: [{
     name: "app",
-    script: "app.js"
+    script: "dist/src/index.js",
+    watch: false
   }],
   deploy: {
     // "production" is the environment name

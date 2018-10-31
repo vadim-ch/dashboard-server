@@ -12,11 +12,17 @@ services:
     - database
     command: ['npm', 'start']
   database:
-    image: postgres:9-alpine
+    image: postgres:10
     ports:
     - '11543:5432'
     volumes:
-    - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    - ./scripts:/docker-entrypoint-initdb.d
     - database-data:/var/lib/postgresql/data
+  nginx:
+    build: nginx
+    ports:
+      - "80:80"
+    links:
+      - app
 volumes:
   database-data: {}

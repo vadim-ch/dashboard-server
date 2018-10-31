@@ -31,7 +31,6 @@ export class Signin extends Controller implements IController {
       }
       if (user) {
         // const updatedExpert = await expertsStore.findAndUpdateExpert(userId, );
-
         const accessToken = await tokenGenerator.makeAccessToken(user);
         const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(user);
         await userStore.addRefreshToken(user.id, refreshUuid, refreshToken);
