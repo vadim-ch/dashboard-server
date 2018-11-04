@@ -56,6 +56,18 @@ export class PutExpertById extends Controller implements IController {
     if (requestData.qualifications) {
       updateData.qualifications = requestData.qualifications;
     }
+    if (requestData.directionsTherapy) {
+      updateData.directionsTherapy = requestData.directionsTherapy;
+    }
+    if (requestData.approachesTherapy) {
+      updateData.approachesTherapy = requestData.approachesTherapy;
+    }
+    if (requestData.methodsTherapy) {
+      updateData.methodsTherapy = requestData.methodsTherapy;
+    }
+    if (requestData.requestsTherapy) {
+      updateData.requestsTherapy = requestData.requestsTherapy;
+    }
     if (req.file) {
       updateData.avatar = req.file.filename
     }

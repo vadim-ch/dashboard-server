@@ -32,7 +32,7 @@ export enum SessionFormatEnum {
 }
 
 export enum DirectionsTherapyEnum {
-  FamilyTherapy = 'family-therapy', // Семейнвя терапия
+  FamilyTherapy = 'family-therapy', // Семейная терапия
   IndividualTherapy = 'individual-therapy', // Индивидуальная терапия
   GroupTherapy = 'group-therapy', // Групповая терапия
 }
@@ -157,26 +157,26 @@ export class Expert {
   /**
    * Подходы
    */
-  @ManyToMany(type => ApproachesTherapy, method => method.id)
+  @ManyToMany(type => ApproachesTherapy, method => method.id, {cascade: true})
   @JoinTable()
-  approachesTherapy: ApproachesTherapy;
+  approachesTherapy: ApproachesTherapy[];
 
   /**
    * Дополнительные методы
    * Арт/телесно...
    */
-  @ManyToMany(type => MethodsTherapy, method => method.id)
+  @ManyToMany(type => MethodsTherapy, method => method.id, {cascade: true})
   @JoinTable()
-  methodsTherapy: MethodsTherapy;
+  methodsTherapy: MethodsTherapy[];
 
 
   /**
    * Приоритетные запросы
    * тревога/кризис/одиночество
    */
-  @ManyToMany(type => RequestsTherapy, method => method.id)
+  @ManyToMany(type => RequestsTherapy, method => method.id, {cascade: true})
   @JoinTable()
-  requestsTherapy: RequestsTherapy;
+  requestsTherapy: RequestsTherapy[];
 
   /**
    * Кабинеты
