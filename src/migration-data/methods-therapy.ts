@@ -1,12 +1,12 @@
 import {QueryRunner} from 'typeorm';
-import {MethodsTherapyEnum} from "../entity/expert/MethodsTherapy";
+import {MethodsTherapyEnum} from '../entity/expert/MethodsTherapy';
 
 export const insertDataMethodsTherapy = async (queryRunner: QueryRunner) => {
   await queryRunner
       .manager
       .createQueryBuilder()
       .insert()
-      .into("methods_therapy")
+      .into('methods_therapy')
       .values([
             {name: MethodsTherapyEnum.MetaphoricCards, title: 'Метафорические карты'},
             {name: MethodsTherapyEnum.ArtTherapy, title: 'Арт терапия'},

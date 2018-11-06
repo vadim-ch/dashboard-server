@@ -3,6 +3,7 @@ import * as passport from 'passport'
 import {UsersRouter} from "./users-router";
 import {ExpertsRouter} from "./experts-router";
 import { AuthRouter } from './auth-router';
+import { SuggestRouter } from './suggest-router';
 const router = express.Router();
 const app = express();
 
@@ -13,5 +14,6 @@ export const routerInit = () => {
   router.use('/', new AuthRouter().router());
   router.use('/users', new UsersRouter().router());
   router.use('/experts', new ExpertsRouter().router());
+  router.use('/suggest', new SuggestRouter().router());
   return router;
 };
