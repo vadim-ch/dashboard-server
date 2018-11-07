@@ -9,6 +9,7 @@
     "dev": "concurrently -k \"npm run build:watch\" \"npm run start:dev\"",
     "build": "rm -rf ./dist && tsc",
     "build:watch": "rm -rf ./dist && tsc -w",
+    "migration:generate": "typeorm migration:generate",
     "migration:run": "npm run build && typeorm migration:run",
     "start": "npm run build && node dist/src/index.js",
     "start:dev": "nodemon --inspect=0.0.0.0:9229 dist/src/index.js"

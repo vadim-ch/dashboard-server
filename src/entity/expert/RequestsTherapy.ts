@@ -42,11 +42,11 @@ export class RequestsTherapy {
   @UpdateDateColumn()
   updatedDate: Date;
 
-  @Column({type: 'enum', enum: RequestsTherapyEnum})
-  name: string;
+  // @Column({type: 'enum', enum: RequestsTherapyEnum})
+  // name: string;
 
-  @Column()
-  title: string;
+  // @Column()
+  // title: string;
 
   @Column({nullable: true})
   description: string;

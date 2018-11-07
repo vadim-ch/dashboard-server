@@ -25,7 +25,7 @@ export class SuggestStore {
     return this._methods;
   }
 
-  protected get repositoryRequests(): Repository<MethodsTherapy> {
+  protected get repositoryRequests(): Repository<RequestsTherapy> {
     if (!this._requests) {
       this._requests = getRepository(RequestsTherapy);
     }
@@ -40,7 +40,7 @@ export class SuggestStore {
     return await this.repositoryMethods.find(conditions);
   }
 
-  public async getAllRequests(conditions?: object): Promise<Array<MethodsTherapy>> {
+  public async getAllRequests(conditions?: object): Promise<Array<RequestsTherapy>> {
     return await this.repositoryRequests.find(conditions);
   }
 }
