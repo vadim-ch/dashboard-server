@@ -6,13 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
-    "dev": "concurrently -k \"npm run build:watch\" \"npm run start:dev\"",
     "build": "rm -rf ./dist && tsc",
     "build:watch": "rm -rf ./dist && tsc -w",
     "migration:generate": "typeorm migration:generate",
     "migration:run": "npm run build && typeorm migration:run",
     "start": "npm run build && node dist/src/index.js",
-    "start:dev": "nodemon --inspect=0.0.0.0:9229 dist/src/index.js"
+    "start:dev": "nodemon src/index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -55,7 +54,6 @@
     "@types/node": "^10.10.1",
     "@types/passport": "^0.4.6",
     "@types/winston": "^2.4.4",
-    "concurrently": "^4.0.1",
-    "nodemon": "^1.18.5"
+    "ts-node": "^7.0.1"
   }
 }

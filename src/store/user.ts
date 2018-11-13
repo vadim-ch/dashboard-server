@@ -1,10 +1,8 @@
 import { AuthError } from '../errors/auth-error';
-import { User } from '../entity/User';
+import {User, UserRole} from '../entity/User';
 import { MainStore } from './main';
 import { UpdateResult } from 'typeorm';
-import { Expert } from '../entity/expert/Expert';
 import { expertsStore, NewExpertType } from './expert';
-
 
 export interface UserType {
   id: string;
@@ -51,7 +49,7 @@ export class UserStore extends MainStore<User> {
   }
 
   public async createNewExpert(data: NewUserType, expertData: NewExpertType): Promise<UserType> {
-    const user = await this.createNew(data, 'expert');
+    const user = await this.createNew(data, UserRole.Expert);
     const expert = await expertsStore.createNew(expertData);
     user.expert = expert;
     await this.repository.save(user);
@@ -66,7 +64,7 @@ export class UserStore extends MainStore<User> {
     });
   }
 
-  private async createNew(data: NewUserType, role: string = 'client'): Promise<User> {
+  private async createNew(data: NewUserType, role: UserRole = UserRole.Client): Promise<User> {
     const existingUser = await this.repository.findOne({email: data.email});
     if (existingUser) {
       throw new AuthError(`User '${data.email}' exist`);

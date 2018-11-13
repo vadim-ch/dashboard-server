@@ -36,15 +36,15 @@ export class Signup extends Controller implements IController {
       email: req.body.email,
       password: req.body.password,
     };
-    const rawUser = registerType === RegisterType.Expert ?
-        await userStore.createNewExpert(newUserData, {
-          firstName: 'first',
-          lastName: 'last',
-          middleName: 'middle',
-          birthday: new Date(),
-          gender: GenderEnum.Male
-        }) :
-        await userStore.createNewClient(newUserData);
+    const rawUser = await userStore.createNewClient(newUserData);
+    // await userStore.createNewExpert(newUserData, {
+    //   firstName: 'first',
+    //   lastName: 'last',
+    //   middleName: 'middle',
+    //   birthday: new Date(),
+    //   gender: GenderEnum.Male
+    // })
+
     const accessToken = await tokenGenerator.makeAccessToken(rawUser);
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(rawUser);
     await userStore.addRefreshToken(rawUser.id, refreshUuid, refreshToken);

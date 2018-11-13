@@ -8,8 +8,13 @@ import {
 } from 'typeorm';
 import { compare, hash } from 'bcrypt';
 import { Client } from './client/Client';
-import { Expert } from './expert/Expert';
-import { UserType } from '../store/user';
+import {Expert} from './expert/Expert';
+
+export enum UserRole {
+  Client = 'client',
+  Expert = 'expert',
+  Admin = 'admin'
+}
 
 @Entity()
 export class User {
@@ -29,8 +34,8 @@ export class User {
   @Column()
   password: string;
 
-  @Column({enum: ['expert', 'client']})
-  role: string;
+  @Column({type: 'enum', enum: UserRole})
+  role: UserRole;
 
   @OneToOne(type => Expert, expert => expert.user)
   expert: Expert;
