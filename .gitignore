@@ -16,3 +16,4 @@ npm-debug.log
 combined.log
 error.log
 /public
+.env

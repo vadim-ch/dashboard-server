@@ -1,11 +1,8 @@
-import { Cabinet } from './entity/expert/Cabinet';
-
 require(`dotenv`).config();
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import App from './app'
 import { logger } from './logger';
-import { Expert } from './entity/expert/Expert';
 
 
 const HOSTNAME = process.env.SERVER_HOST || `localhost`;
@@ -36,4 +33,4 @@ createConnection().then(async connection => {
   // }));
   // let expertRepository = connection.getRepository(Expert);
   // expertRepository.update('1', {email: '4@5.ru'})
-}).catch(error => console.log(error));
+}).catch(error => console.log(`connection db error: ${error}`));
