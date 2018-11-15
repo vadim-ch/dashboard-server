@@ -9,7 +9,6 @@ export type UserCheckerType = {
 };
 
 export interface IController {
-  validate(req: Request, res: Response, next): void;
 
   checkAuth(req: Request, res: Response, next): void;
 
@@ -19,18 +18,14 @@ export interface IController {
 export class Controller {
   private secret: string;
   private checkUserRules: UserCheckerType;
-  public beforeRequest: Array<any> = [];
-  public validateRules: Array<any> = [];
+  public beforeRequest: Array<any> = []; // массив middleware, которые выполняться перед хендлером запроса
+  public validateRules: Array<any> = []; // правила для валидации запроса
 
   constructor(secret?: string, checkUserRules?: UserCheckerType) {
     this.secret = secret;
     if (checkUserRules) {
       this.checkUserRules = checkUserRules;
     }
-  }
-
-  public validate(req: Request, res: Response, next): void {
-
   }
 
   public checkAuth = (req: Request, res: Response, next) => {

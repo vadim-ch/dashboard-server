@@ -3,6 +3,7 @@ import {User, UserRole} from '../entity/User';
 import { MainStore } from './main';
 import { UpdateResult } from 'typeorm';
 import { expertsStore, NewExpertType } from './expert';
+import { NotFoundError } from '../errors/not-found-error';
 
 export interface UserType {
   id: string;
@@ -62,6 +63,17 @@ export class UserStore extends MainStore<User> {
         [refreshId]: refreshToken
       }
     });
+  }
+
+  public async findAndUpdate(userId: string, fields: any) {
+    try {
+      // const updateResult = await this.repository.update({id: expertId, userId}, fields);
+      const user = await this.repository.findOneOrFail({id: userId});
+      const newUser = {...user, ...fields};
+      return await this.repository.save(newUser);
+    } catch (e) {
+      throw new NotFoundError(`Expert '${userId}' not found, ${e}`);
+    }
   }
 
   private async createNew(data: NewUserType, role: UserRole = UserRole.Client): Promise<User> {

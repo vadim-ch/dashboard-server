@@ -24,3 +24,6 @@ npm run start
 
 Облачная база
 https://customer.elephantsql.com/instance
+
+Генерация секрета
+node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"

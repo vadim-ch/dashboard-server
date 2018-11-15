@@ -1,12 +1,7 @@
-import * as jwt from 'jsonwebtoken';
 import { SESSION_SECRET } from './env-vars';
 import * as jwtService from '../services/jwt-service';
 import * as uuidv1 from 'uuid/v1';
 import { config } from '../../config';
-
-// export const JwtAccessOptions = {
-//     expiresIn: 30
-// };
 
 const JwtCommonOptions = {
   algorithm: 'HS256',

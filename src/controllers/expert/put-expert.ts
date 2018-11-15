@@ -25,6 +25,7 @@ export class PutExpertById extends Controller implements IController {
   public beforeRequest: Array<any> = [
     upload.single('avatar')
   ];
+
   public validateRules: Array<any> = [
     param(paramUserIdField).isString().isLength({min: 5}),
   ];
