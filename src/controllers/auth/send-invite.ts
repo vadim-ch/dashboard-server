@@ -6,6 +6,9 @@ import { renderDataSuccess } from '../../util/data-render';
 import * as jwtService from '../../services/jwt-service';
 import { EMAIL_SIGNIN_SECRET, SESSION_SECRET } from '../../util/env-vars';
 import { UserRole } from '../../entity/User';
+import * as expressJwtPermissions from 'express-jwt-permissions'
+
+const guard = expressJwtPermissions();
 
 let transporter = nodemailer.createTransport({
   host: 'localhost',
@@ -13,16 +16,19 @@ let transporter = nodemailer.createTransport({
 });
 
 export class SendInvite extends Controller implements IController {
+  public beforeRequest: Array<any> = [
+    guard.check([
+      [`${UserRole.Expert}`],
+      [`${UserRole.Admin}`]
+    ])
+  ];
+
   public validateRules: Array<any> = [
     check('email').isEmail(),
   ];
 
   constructor() {
     super(SESSION_SECRET);
-  }
-
-  public validate(req: Request, res: Response, next): void {
-
   }
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {

@@ -1,11 +1,9 @@
 import { Controller, IController } from '../';
 import { Request, Response } from 'express';
-import { check, param } from "express-validator/check";
-import { loginHandler } from "../helper";
-import { expertsStore } from "../../store/expert";
-import { tokenGenerator } from "../../util/token-generator";
+import { check, param } from 'express-validator/check';
+import { loginHandler } from '../helper';
+import { tokenGenerator } from '../../util/token-generator';
 import { userStore } from '../../store/user';
-import { GenderEnum } from '../../entity/expert/Expert';
 
 const RegisterType = {
   Client: 'client',
@@ -24,11 +22,6 @@ export class Signup extends Controller implements IController {
   constructor() {
     super();
   }
-
-  public validate(req: Request, res: Response, next): void {
-
-  }
-
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const registerType = req.params.registerType;

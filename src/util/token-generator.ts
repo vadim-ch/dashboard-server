@@ -2,6 +2,7 @@ import { SESSION_SECRET } from './env-vars';
 import * as jwtService from '../services/jwt-service';
 import * as uuidv1 from 'uuid/v1';
 import { config } from '../../config';
+import { UserRole } from '../entity/User';
 
 const JwtCommonOptions = {
   algorithm: 'HS256',
@@ -20,8 +21,11 @@ export const JwtRefreshOptions = {
   // notBefore: '2s'
 };
 
+// const roles = [UserRole.Admin, UserRole.Expert, UserRole.Client];
+
 export type UserEntityType = {
   id: string;
+  role: UserRole;
   clientId?: string;
   expertId?: string;
   email: string;
@@ -37,10 +41,14 @@ export class TokenGenerator {
   }
 
   public makeAccessToken(userEntity: UserEntityType): Promise<string> {
+    console.error(userEntity);
     const payload = {
       tokenType: config.token.access.type,
       email: userEntity.email,
-      expertId: userEntity.expertId
+      expertId: userEntity.expertId,
+      permissions: [
+        userEntity.role
+      ]
     };
     const options = {
       ...JwtAccessOptions,

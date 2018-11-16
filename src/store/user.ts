@@ -9,6 +9,7 @@ export interface UserType {
   id: string;
   email: string;
   expertId: string;
+  role: UserRole;
 }
 
 export interface NewUserType {
@@ -25,7 +26,8 @@ export class UserStore extends MainStore<User> {
     return {
       id: user.id,
       email: user.email,
-      expertId
+      expertId,
+      role: user.role
     }
   }
 
