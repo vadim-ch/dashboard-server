@@ -1,16 +1,13 @@
-import { Controller, IController } from '../';
-import { Request, Response } from 'express';
-import { check, param } from 'express-validator/check';
+import {Controller, IController} from '../';
+import {Request, Response} from 'express';
+import {check} from 'express-validator/check';
 import * as expressJwt from 'express-jwt'
-import { EMAIL_SIGNIN_SECRET } from '../../util/env-vars';
-import { renderDataSuccess } from '../../util/data-render';
-import { userAuth } from '../../passport';
-import { tokenGenerator } from '../../util/token-generator';
-import { userStore } from '../../store/user';
-import { loginHandler } from '../helper';
-import { GenderEnum } from '../../entity/expert/Expert';
-import { expertsStore } from '../../store/expert';
-import { UserRole } from '../../entity/User';
+import {EMAIL_SIGNIN_SECRET} from '../../util/env-vars';
+import {tokenGenerator} from '../../util/token-generator';
+import {userStore} from '../../store/user';
+import {loginHandler} from '../helper';
+import {UserRole} from '../../entity/User';
+import {logger} from "../../logger";
 
 export class EmailSignin extends Controller implements IController {
   public beforeRequest: Array<any> = [
@@ -37,21 +34,21 @@ export class EmailSignin extends Controller implements IController {
     const existUser = await userStore.getByEmail(user.email);
     let result;
     if (existUser) {
-      result = await userStore.findAndUpdate(existUser.id, {role: UserRole.Expert})
+      // result = await userStore.findAndUpdate(existUser.id, {role: UserRole.Expert})
       // тут не хватает создания записи в таблице expert
+      result = existUser;
     } else {
-      const newUserData = {
-        email: user.email,
-        password: '123123',
-      };
-      result = await userStore.createNewExpert(newUserData, {
-        firstName: 'first',
-        lastName: 'last',
-        middleName: 'middle',
-        birthday: new Date(),
-        gender: GenderEnum.Male
-      });
+      if (user.role === UserRole.Expert) {
+        try {
+          result = await userStore.createNewExpert({email: user.email});
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        console.error('signup only experts');
+      }
     }
+
     const accessToken = await tokenGenerator.makeAccessToken(result);
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(result);
     await userStore.addRefreshToken(result.id, refreshUuid, refreshToken);

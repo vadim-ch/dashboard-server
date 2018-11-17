@@ -34,6 +34,7 @@ export class SendInvite extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // setup email data with unicode symbols
     const token = await this.generateToken(req.user.sub, req.body.email);
+    console.error(token);
     let mailOptions = {
       to: req.body.email, // list of receivers
       subject: 'Hello ✔', // Subject line
@@ -58,7 +59,6 @@ export class SendInvite extends Controller implements IController {
       // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
       // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
     });
-    console.error(token);
     renderDataSuccess(req, res, {status: 'ok'});
   }
 

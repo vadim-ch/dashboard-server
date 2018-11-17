@@ -18,11 +18,11 @@ export interface ExpertType {
 }
 
 export interface NewExpertType {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  birthday: Date;
-  gender: GenderEnum;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  birthday?: Date;
+  gender?: GenderEnum;
 }
 
 export type ExpertUpdateFields = {

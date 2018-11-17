@@ -14,7 +14,7 @@ export interface UserType {
 
 export interface NewUserType {
   email: string;
-  password: string;
+  password?: string;
 }
 
 export class UserStore extends MainStore<User> {
@@ -51,7 +51,7 @@ export class UserStore extends MainStore<User> {
     return UserStore.prepareUser(user);
   }
 
-  public async createNewExpert(data: NewUserType, expertData: NewExpertType): Promise<UserType> {
+  public async createNewExpert(data: NewUserType, expertData?: NewExpertType): Promise<UserType> {
     const user = await this.createNew(data, UserRole.Expert);
     const expert = await expertsStore.createNew(expertData);
     user.expert = expert;
@@ -74,7 +74,7 @@ export class UserStore extends MainStore<User> {
       const newUser = {...user, ...fields};
       return await this.repository.save(newUser);
     } catch (e) {
-      throw new NotFoundError(`Expert '${userId}' not found, ${e}`);
+      throw new NotFoundError(`User '${userId}' not found, ${e}`);
     }
   }
 

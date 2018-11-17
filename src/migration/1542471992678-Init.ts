@@ -1,6 +1,6 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class Init1541607949520 implements MigrationInterface {
+export class Init1542471992678 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query(`CREATE TABLE "cabinet" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdDate" TIMESTAMP NOT NULL DEFAULT now(), "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "address" character varying NOT NULL, "availableHours" character varying NOT NULL, "ownerId" uuid, CONSTRAINT "PK_6e1aaa59022d432d8cf3df7ef46" PRIMARY KEY ("id"))`);
@@ -13,8 +13,9 @@ export class Init1541607949520 implements MigrationInterface {
         await queryRunner.query(`CREATE TYPE "expert_sessionformat_enum" AS ENUM('meeting', 'video', 'audio')`);
         await queryRunner.query(`CREATE TYPE "expert_qualifications_enum" AS ENUM('psychologist', 'psychotherapist', 'psychiatrist', 'psychoanalyst')`);
         await queryRunner.query(`CREATE TYPE "expert_directionstherapy_enum" AS ENUM('family-therapy', 'individual-therapy', 'group-therapy')`);
-        await queryRunner.query(`CREATE TABLE "expert" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userId" uuid, "createdDate" TIMESTAMP NOT NULL DEFAULT now(), "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "firstName" character varying NOT NULL, "middleName" character varying NOT NULL, "lastName" character varying NOT NULL, "avatar" character varying, "description" character varying, "birthday" date, "gender" "expert_gender_enum", "location" character varying, "sessionTime" character varying, "sessionPrice" character varying, "sessionFormat" "expert_sessionformat_enum" array, "qualifications" "expert_qualifications_enum" array, "ownTherapyHours" integer, "directionsTherapy" "expert_directionstherapy_enum" array, CONSTRAINT "REL_39d99079a5227599160c408b22" UNIQUE ("userId"), CONSTRAINT "PK_0062630832658e718267ce2941f" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdDate" TIMESTAMP NOT NULL DEFAULT now(), "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "email" character varying NOT NULL, "password" character varying NOT NULL, "role" character varying NOT NULL, "refreshTokenMap" hstore, CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "expert" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userId" uuid, "createdDate" TIMESTAMP NOT NULL DEFAULT now(), "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "firstName" character varying, "middleName" character varying, "lastName" character varying, "avatar" character varying, "description" character varying, "birthday" date, "gender" "expert_gender_enum", "location" character varying, "sessionTime" character varying, "sessionPrice" character varying, "sessionFormat" "expert_sessionformat_enum" array, "qualifications" "expert_qualifications_enum" array, "ownTherapyHours" integer, "directionsTherapy" "expert_directionstherapy_enum" array, CONSTRAINT "REL_39d99079a5227599160c408b22" UNIQUE ("userId"), CONSTRAINT "PK_0062630832658e718267ce2941f" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "user_role_enum" AS ENUM('client', 'expert', 'admin')`);
+        await queryRunner.query(`CREATE TABLE "user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdDate" TIMESTAMP NOT NULL DEFAULT now(), "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "email" character varying NOT NULL, "password" character varying, "role" "user_role_enum" NOT NULL, "refreshTokenMap" hstore, CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "client" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userId" uuid, "createdDate" TIMESTAMP NOT NULL DEFAULT now(), "updatedDate" TIMESTAMP NOT NULL DEFAULT now(), "email" character varying NOT NULL, "password" character varying NOT NULL, "nickname" character varying NOT NULL, "firstName" character varying, "lastName" character varying, "age" character varying, CONSTRAINT "REL_ad3b4bf8dd18a1d467c5c0fc13" UNIQUE ("userId"), CONSTRAINT "PK_96da49381769303a6515a8785c7" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "expert_approaches_therapy_approaches_therapy" ("expertId" uuid NOT NULL, "approachesTherapyId" integer NOT NULL, CONSTRAINT "PK_8f3aa44cd0acf7ddf967ed1e0ca" PRIMARY KEY ("expertId", "approachesTherapyId"))`);
         await queryRunner.query(`CREATE TABLE "expert_methods_therapy_methods_therapy" ("expertId" uuid NOT NULL, "methodsTherapyId" integer NOT NULL, CONSTRAINT "PK_1c6ea8cf8ba216abe35a196c953" PRIMARY KEY ("expertId", "methodsTherapyId"))`);
@@ -45,6 +46,7 @@ export class Init1541607949520 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "expert_approaches_therapy_approaches_therapy"`);
         await queryRunner.query(`DROP TABLE "client"`);
         await queryRunner.query(`DROP TABLE "user"`);
+        await queryRunner.query(`DROP TYPE "user_role_enum"`);
         await queryRunner.query(`DROP TABLE "expert"`);
         await queryRunner.query(`DROP TYPE "expert_directionstherapy_enum"`);
         await queryRunner.query(`DROP TYPE "expert_qualifications_enum"`);

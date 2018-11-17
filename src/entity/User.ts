@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  BeforeInsert, OneToOne, JoinColumn,
+  BeforeInsert,
+  OneToOne,
+  BeforeUpdate,
 } from 'typeorm';
 import { compare, hash } from 'bcrypt';
 import { Client } from './client/Client';
@@ -31,7 +33,7 @@ export class User {
   @Column()
   email: string;
 
-  @Column()
+  @Column({nullable: true})
   password: string;
 
   @Column({type: 'enum', enum: UserRole})
@@ -51,8 +53,21 @@ export class User {
   }
 
   @BeforeInsert()
+  public async preSave() {
+    console.error('preSave');
+    await this.hashPassword();
+  }
+
+  @BeforeUpdate()
+  public async preUpdate() {
+    console.error('preUpdate');
+    await this.hashPassword();
+  }
+
   public async hashPassword() {
     // conditional to detect if password has changed goes here
-    this.password = await hash(this.password, 12);
+    if (this.password) {
+      this.password = await hash(this.password, 12);
+    }
   }
 }

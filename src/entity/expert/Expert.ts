@@ -59,19 +59,19 @@ export class Expert {
   /** ----------------- Персональная информация -----------------
    * Имя
    */
-  @Column()
+  @Column({nullable: true})
   firstName: string;
 
   /**
    * Отчество
    */
-  @Column()
+  @Column({nullable: true})
   middleName: string;
 
   /**
    * Фамилия
    */
-  @Column()
+  @Column({nullable: true})
   lastName: string;
 
   /**
