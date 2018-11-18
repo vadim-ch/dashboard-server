@@ -15,6 +15,9 @@ let transporter = nodemailer.createTransport({
   port: 2525
 });
 
+/**
+  Запрос на magic link
+ */
 export class EmailSigninRequest extends Controller implements IController {
   public validateRules: Array<any> = [
     check('email').isEmail(),
@@ -25,9 +28,7 @@ export class EmailSigninRequest extends Controller implements IController {
   }
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
-    // setup email data with unicode symbols
-    // метод для восстановления пароля через емейл
-    // тут возможно надо проверять существование юзера
+    // метод для запроса magic link на емейл
     const token = await this.generateToken(req.body.email);
     console.error(token);
     renderDataSuccess(req, res, {status: 'ok'});

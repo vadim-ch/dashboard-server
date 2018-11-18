@@ -8,6 +8,8 @@ import { SendInvite } from '../controllers/auth/send-invite';
 import { EmailSignin } from '../controllers/auth/email-signin';
 import { EmailSigninRequest } from '../controllers/auth/email-signin-request';
 import { PutAccount } from '../controllers/auth/account';
+import {ConfirmUser} from "../controllers/auth/confirm-user";
+import {VerifyRequest} from "../controllers/auth/verify-request";
 
 const router = express.Router();
 
@@ -17,16 +19,20 @@ export class AuthRouter extends BaseRouter implements IRouter {
   }
 
   public router(): Router {
-    router.post(`/login`, ...this.handlerRunner(new Signin()));
-
+    router.post(`/login`, ...this.handlerRunner(new Signin())); // вход по логину паролю
     // регистрация осуществляется только по приглашению
     // router.post(`/register/:registerType`, ...this.handlerRunner(new Signup()));
-    router.post(`/logout`, ...this.handlerRunner(new Logout()));
+    router.post(`/logout`, ...this.handlerRunner(new Logout())); // выход
 
-    router.post(`/send-invite`, ...this.handlerRunner(new SendInvite()));
-    router.post(`/email-signin`, ...this.handlerRunner(new EmailSignin()));
-    router.post(`/email-signin-request`, ...this.handlerRunner(new EmailSigninRequest()));
-    router.put(`/account`, ...this.handlerRunner(new PutAccount()));
+    router.post(`/send-invite`, ...this.handlerRunner(new SendInvite())); // отсылка приглашения на регистрацию на почту
+    router.post(`/email-signin`, ...this.handlerRunner(new EmailSignin())); // регистрация или вход по токену
+    router.post(`/email-signin-request`, ...this.handlerRunner(new EmailSigninRequest())); // запрос на magic link
+
+    // верификация от админа
+    router.post(`/verify-request`, ...this.handlerRunner(new VerifyRequest()));
+    router.post(`/confirm-user`, ...this.handlerRunner(new ConfirmUser()));
+
+    router.put(`/account`, ...this.handlerRunner(new PutAccount())); // запрос для изменения авторизацилнных данных. пока не работает
 
     router.use((exception, req, res, next) => {
       renderException(req, res, exception);

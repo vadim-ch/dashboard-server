@@ -48,6 +48,9 @@ export class User {
   @Column({type: 'hstore', nullable: true})
   refreshTokenMap: object;
 
+  @Column({default: false})
+  active: boolean;
+
   public async comparePassword(candidatePassword: string): Promise<boolean> {
     return await compare(candidatePassword, this.password);
   }
