@@ -7,7 +7,6 @@ import {tokenGenerator} from '../../util/token-generator';
 import {userStore} from '../../store/user';
 import {loginHandler} from '../helper';
 import {UserRole} from '../../entity/User';
-import {logger} from "../../logger";
 
 export class EmailSignin extends Controller implements IController {
   public beforeRequest: Array<any> = [

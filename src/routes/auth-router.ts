@@ -10,6 +10,7 @@ import { EmailSigninRequest } from '../controllers/auth/email-signin-request';
 import { PutAccount } from '../controllers/auth/account';
 import {ConfirmUser} from "../controllers/auth/confirm-user";
 import {VerifyRequest} from "../controllers/auth/verify-request";
+import {GetCurrentUser} from "../controllers/auth/current-user";
 
 const router = express.Router();
 
@@ -32,6 +33,7 @@ export class AuthRouter extends BaseRouter implements IRouter {
     router.post(`/verify-request`, ...this.handlerRunner(new VerifyRequest()));
     router.post(`/confirm-user`, ...this.handlerRunner(new ConfirmUser()));
 
+    router.get(`/current-user`, ...this.handlerRunner(new GetCurrentUser()));
     router.put(`/account`, ...this.handlerRunner(new PutAccount())); // запрос для изменения авторизацилнных данных. пока не работает
 
     router.use((exception, req, res, next) => {

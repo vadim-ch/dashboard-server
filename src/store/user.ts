@@ -36,9 +36,10 @@ export class UserStore extends MainStore<User> {
     return UserStore.prepareUser(user);
   }
 
-  public async getByEmail(email: string): Promise<User> {
-    return await this.repository.findOne({email});
+  public async getByEmail(email: string, relations?: Array<string>): Promise<User> {
+    return await this.repository.findOneOrFail({where: {email}, relations});
   }
+
   public async getExpertByUserId(userId: string): Promise<User> {
     return await this.repository.findOne(userId, {relations: ['expert']});
   }

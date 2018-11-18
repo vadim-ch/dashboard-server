@@ -10,9 +10,16 @@ import * as expressJwtPermissions from 'express-jwt-permissions'
 
 const guard = expressJwtPermissions();
 
-let transporter = nodemailer.createTransport({
-  host: 'localhost',
-  port: 2525
+const url = 'http://localhost:8081';
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.ethereal.email',
+  port: 587,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: 'svjy3c7swvnpaeis@ethereal.email', // generated ethereal user
+    pass: 'kmzRgS8Z9DM7FBysWT' // generated ethereal password
+  }
 });
 
 export class SendInvite extends Controller implements IController {
@@ -34,17 +41,17 @@ export class SendInvite extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // setup email data with unicode symbols
     const token = await this.generateToken(req.user.sub, req.body.email);
-    console.error(token);
     let mailOptions = {
       to: req.body.email, // list of receivers
       subject: 'Hello ✔', // Subject line
       html: `
-        <h1>Magic link 🎩 !</h1>
-        <a href="http://localhost/api/signin/?token=${encodeURIComponent(token)}">
-          YOUHOU
+        <h1>Найди своего психолога</h1>
+        <h3>Вас пригласили в проект НСП</h3>
+        <a href="${url}/settings/?email-token=${encodeURIComponent(token)}">
+          Заполнить профиль
         </a>
       `,
-      text: `http://localhost/signin/?token=${encodeURIComponent(token)}`,
+      text: `${url}/settings/?email-token=${encodeURIComponent(token)}`,
     };
 
     // send mail with defined transport object
@@ -71,7 +78,7 @@ export class SendInvite extends Controller implements IController {
     const options = {
       algorithm: 'HS256',
       noTimestamp: false,
-      expiresIn: '10h',
+      expiresIn: '5m',
     };
     return jwtService.sign(payload, EMAIL_SIGNIN_SECRET, options)
   }

@@ -57,13 +57,11 @@ export class User {
 
   @BeforeInsert()
   public async preSave() {
-    console.error('preSave');
     await this.hashPassword();
   }
 
   @BeforeUpdate()
   public async preUpdate() {
-    console.error('preUpdate');
     await this.hashPassword();
   }
 

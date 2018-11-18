@@ -27,7 +27,7 @@ export type UserEntityType = {
   id: string;
   role: UserRole;
   clientId?: string;
-  expertId?: string;
+  expertId: string;
   email: string;
 }
 
@@ -41,7 +41,6 @@ export class TokenGenerator {
   }
 
   public makeAccessToken(userEntity: UserEntityType): Promise<string> {
-    console.error(userEntity);
     const payload = {
       tokenType: config.token.access.type,
       email: userEntity.email,

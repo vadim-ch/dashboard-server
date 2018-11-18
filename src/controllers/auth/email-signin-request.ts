@@ -30,7 +30,6 @@ export class EmailSigninRequest extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // метод для запроса magic link на емейл
     const token = await this.generateToken(req.body.email);
-    console.error(token);
     renderDataSuccess(req, res, {status: 'ok'});
   }
 
