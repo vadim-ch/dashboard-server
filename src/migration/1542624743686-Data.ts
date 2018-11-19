@@ -1,4 +1,8 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
+import { insertDataMethodsTherapy } from '../migration-data/methods-therapy';
+import { insertDataApproachesTherapy } from '../migration-data/approaches-therapy';
+import { insertDataRequestsTherapy } from '../migration-data/requests-therapy';
+import { insertDataUser } from '../migration-data/user';
 
 export class Data1542624743686 implements MigrationInterface {
 
