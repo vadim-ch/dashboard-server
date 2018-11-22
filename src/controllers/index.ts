@@ -30,7 +30,18 @@ export class Controller {
 
   public checkAuth = (req: Request, res: Response, next) => {
     if (this.secret) {
-      expressJwt({secret: this.secret})(req, res, next);
+      // https://github.com/auth0-blog/cookie-jwt-auth/blob/master/server.js
+      expressJwt({
+        secret: this.secret,
+        getToken: function fromHeaderOrCookie(req) {
+          if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            return req.headers.authorization.split(' ')[1];
+          } else if(req.cookies && req.cookies.id_token) {
+            return req.cookies.id_token;
+          }
+          return null;
+        }
+      })(req, res, next);
     } else {
       next();
     }
