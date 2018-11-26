@@ -2,7 +2,7 @@ import {Controller, IController} from '../';
 import {Request, Response} from 'express';
 import {check} from 'express-validator/check';
 import * as expressJwt from 'express-jwt'
-import {EMAIL_SIGNIN_SECRET} from '../../util/env-vars';
+import { EMAIL_SIGNIN_SECRET } from '../../util/env-vars';
 import {tokenGenerator} from '../../util/token-generator';
 import {userStore} from '../../store/user';
 import {loginHandler} from '../helper';

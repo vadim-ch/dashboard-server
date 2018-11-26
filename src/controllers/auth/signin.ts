@@ -6,6 +6,7 @@ import { userAuth } from '../../passport';
 import { expertsStore } from '../../store/expert';
 import { tokenGenerator } from '../../util/token-generator';
 import { userStore } from '../../store/user';
+import { CLIENT_URL } from '../../util/env-vars';
 
 export class Signin extends Controller implements IController {
   public validateRules: Array<any> = [
