@@ -35,7 +35,7 @@ export class AuthRouter extends BaseRouter implements IRouter {
     router.post(`/confirm-user`, ...this.handlerRunner(new ConfirmUser()));
 
     router.get(`/current-user`, ...this.handlerRunner(new GetCurrentUser()));
-    router.put(`/account`, ...this.handlerRunner(new PutAccount())); // запрос для изменения авторизацилнных данных. пока не работает
+    router.put(`/account`, ...this.handlerRunner(new PutAccount())); // запрос для изменения авторизационных данных. Пока только изменяет пароль
 
     router.use((exception, req, res, next) => {
       logger.error(`Auth router error, method: ${req.url}, exception: ${exception}`);

@@ -18,11 +18,7 @@ export class PutAccount extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const authUserId = req.user.sub;
     const requestData = req.body;
-    let updateData: any = {};
-    if (requestData.password) {
-      updateData.password = requestData.password;
-    }
-    const user = await userStore.findAndUpdate(authUserId, updateData);
+    const user = await userStore.changePassword(authUserId, requestData.password);
     renderDataSuccess(req, res, {status: 'ok'});
   }
 }

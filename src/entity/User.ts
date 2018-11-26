@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   OneToOne,
-  BeforeUpdate,
+  BeforeUpdate, AfterLoad,
 } from 'typeorm';
 import { compare, hash } from 'bcrypt';
 import { Client } from './client/Client';
@@ -20,6 +20,7 @@ export enum UserRole {
 
 @Entity()
 export class User {
+  private tempPassword: string;
 
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -65,9 +66,13 @@ export class User {
     await this.hashPassword();
   }
 
+  @AfterLoad()
+  private loadTempPassword(): void {
+    this.tempPassword = this.password;
+  }
+
   public async hashPassword() {
-    // conditional to detect if password has changed goes here
-    if (this.password) {
+    if (this.password && this.tempPassword !== this.password) {
       this.password = await hash(this.password, 12);
     }
   }

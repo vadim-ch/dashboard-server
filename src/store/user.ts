@@ -79,6 +79,16 @@ export class UserStore extends MainStore<User> {
     }
   }
 
+  public async changePassword(userId: string, password: string): Promise<User> {
+    try {
+      const user = await this.repository.findOneOrFail({id: userId});
+      user.password = password;
+      return await this.repository.save(user);
+    } catch (e) {
+      throw new NotFoundError(`User '${userId}' not found, ${e}`);
+    }
+  }
+
   private async createNew(data: NewUserType, role: UserRole = UserRole.Client): Promise<User> {
     const existingUser = await this.repository.findOne({email: data.email});
     if (existingUser) {
