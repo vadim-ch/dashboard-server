@@ -5,6 +5,7 @@ import * as express from 'express'
 import { AllApproaches } from '../controllers/suggest/approaches/all';
 import { AllMethods } from '../controllers/suggest/methods/all';
 import { AllRequests } from '../controllers/suggest/requests/all';
+import { logger } from '../logger';
 const router = express.Router();
 
 export class SuggestRouter extends BaseRouter implements IRouter {
@@ -18,6 +19,7 @@ export class SuggestRouter extends BaseRouter implements IRouter {
     router.get(`/requests`, ...this.handlerRunner(new AllRequests()));
 
     router.use((exception, req, res, next) => {
+      logger.error(`Suggest router error, method: ${req.url}, exception: ${exception}`);
       renderException(req, res, exception);
       next();
     });

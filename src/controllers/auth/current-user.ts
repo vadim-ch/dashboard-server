@@ -11,7 +11,7 @@ export class GetCurrentUser extends Controller implements IController {
   public beforeRequest: Array<any> = [
     guard.check([
       [`${UserRole.Expert}`],
-      [`${UserRole.Admin}`]
+      [`${UserRole.Admin}`],
       [`${UserRole.Client}`]
     ])
   ];

@@ -2,7 +2,7 @@ import * as express from 'express'
 // import * as lusca from 'lusca';
 import * as morgan from 'morgan';
 import { routerInit } from './routes';
-import { isProduction } from './util/env-vars';
+import { CLIENT_URL, isProduction } from './util/env-vars';
 import * as cors from 'cors'
 import * as bodyParser from 'body-parser'
 
@@ -15,7 +15,7 @@ class App {
   constructor() {
     this.express = express();
 
-    const whitelist = ['http://localhost:8080'];
+    const whitelist = [CLIENT_URL];
     const corsOptions = {
       origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1) {

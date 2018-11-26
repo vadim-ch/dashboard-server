@@ -18,11 +18,6 @@ export class Signin extends Controller implements IController {
     super();
   }
 
-  public validate(req: Request, res: Response, next): void {
-
-  }
-
-
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
     userAuth.authenticate('local', {session: false}, async (err, user, info) => {

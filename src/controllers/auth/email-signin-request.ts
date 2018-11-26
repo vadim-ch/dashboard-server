@@ -7,13 +7,9 @@ import * as jwtService from '../../services/jwt-service';
 import { EMAIL_SIGNIN_SECRET, SESSION_SECRET } from '../../util/env-vars';
 import { UserRole } from '../../entity/User';
 import * as expressJwtPermissions from 'express-jwt-permissions'
+import { sendEmailSigninToEmail } from '../../services/mailer';
 
 const guard = expressJwtPermissions();
-
-let transporter = nodemailer.createTransport({
-  host: 'localhost',
-  port: 2525
-});
 
 /**
   Запрос на magic link
@@ -30,6 +26,7 @@ export class EmailSigninRequest extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     // метод для запроса magic link на емейл
     const token = await this.generateToken(req.body.email);
+    sendEmailSigninToEmail(req.body.email, token);
     renderDataSuccess(req, res, {status: 'ok'});
   }
 

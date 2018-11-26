@@ -1,5 +1,5 @@
-import {QueryRunner} from 'typeorm';
-import {UserRole} from "../entity/User";
+import { QueryRunner } from 'typeorm';
+import { UserRole } from '../entity/User';
 
 export const insertDataUser = async (queryRunner: QueryRunner) => {
   await queryRunner
@@ -9,7 +9,7 @@ export const insertDataUser = async (queryRunner: QueryRunner) => {
       .into('user')
       .values([
             {
-              email: 'admin@admin.ru',
+              email: process.env['MAIN_EMAIL_LOGIN'],
               role: UserRole.Admin
             },
           ]

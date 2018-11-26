@@ -6,6 +6,7 @@ import {GetExpertById} from '../controllers/expert/get-expert';
 import {PutExpertById} from '../controllers/expert/put-expert';
 import {AllExperts} from '../controllers/expert/all-experts';
 import {paramUserIdField} from "../controllers/helper";
+import { logger } from '../logger';
 const router = express.Router();
 
 export class ExpertsRouter extends BaseRouter implements IRouter {
@@ -19,6 +20,7 @@ export class ExpertsRouter extends BaseRouter implements IRouter {
     router.put(`/:${paramUserIdField}`, ...this.handlerRunner(new PutExpertById()));
 
     router.use((exception, req, res, next) => {
+      logger.error(`Expert router error, method: ${req.url}, exception: ${exception}`);
       renderException(req, res, exception);
       next();
     });

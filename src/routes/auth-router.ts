@@ -11,6 +11,7 @@ import { PutAccount } from '../controllers/auth/account';
 import {ConfirmUser} from "../controllers/auth/confirm-user";
 import {VerifyRequest} from "../controllers/auth/verify-request";
 import {GetCurrentUser} from "../controllers/auth/current-user";
+import { logger } from '../logger';
 
 const router = express.Router();
 
@@ -37,6 +38,7 @@ export class AuthRouter extends BaseRouter implements IRouter {
     router.put(`/account`, ...this.handlerRunner(new PutAccount())); // запрос для изменения авторизацилнных данных. пока не работает
 
     router.use((exception, req, res, next) => {
+      logger.error(`Auth router error, method: ${req.url}, exception: ${exception}`);
       renderException(req, res, exception);
       next();
     });
