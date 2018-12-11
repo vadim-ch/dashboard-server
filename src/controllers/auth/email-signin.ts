@@ -7,6 +7,7 @@ import {tokenGenerator} from '../../util/token-generator';
 import {userStore} from '../../store/user';
 import {loginHandler} from '../helper';
 import {UserRole} from '../../entity/User';
+import { NotOwnedError } from '../../errors/no-owned-error';
 
 export class EmailSignin extends Controller implements IController {
   public beforeRequest: Array<any> = [
@@ -44,11 +45,11 @@ export class EmailSignin extends Controller implements IController {
           console.error(e);
         }
       } else {
-        console.error('signup only experts');
+        throw new NotOwnedError(`Email ${user.email} not found in DB or invalid role`);
       }
     }
 
-    const accessToken = await tokenGenerator.makeAccessToken(result);
+    const accessToken = await tokenGenerator.makeAccessToken({...result, profileId: result.expertId});
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(result);
     await userStore.addRefreshToken(result.id, refreshUuid, refreshToken);
     req.login(user, {session: false}, loginHandler(req, res, next, accessToken, refreshToken));

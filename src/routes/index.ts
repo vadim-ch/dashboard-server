@@ -12,7 +12,7 @@ export const routerInit = () => {
   app.use(passport.initialize());
 
   router.use('/', new AuthRouter().router());
-  router.use('/users', new UsersRouter().router());
+  // router.use('/users', new UsersRouter().router());
   router.use('/experts', new ExpertsRouter().router());
   router.use('/suggest', new SuggestRouter().router());
   return router;

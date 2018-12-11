@@ -5,7 +5,6 @@ import * as express from 'express'
 import { AllUsers } from '../controllers/client/all-users';
 import { GetUserById } from '../controllers/client/get-user';
 import { PutUserById } from '../controllers/client/put-user';
-import { GetCurrentUser } from '../controllers/client/current-user';
 import { paramUserIdField } from '../controllers/helper';
 import { logger } from '../logger';
 
@@ -19,7 +18,7 @@ export class UsersRouter extends BaseRouter implements IRouter {
 
   public router(): Router {
     router.get(``, ...this.handlerRunner(new AllUsers()));
-    router.get(`/current`, ...this.handlerRunner(new GetCurrentUser()));
+    // router.get(`/current`, ...this.handlerRunner(new GetCurrentUser()));
     router.get(`/:${paramUserIdField}`, ...this.handlerRunner(new GetUserById()));
     router.put(`/:${paramUserIdField}`, ...this.handlerRunner(new PutUserById()));
 
