@@ -6,19 +6,21 @@ import {GetExpertById} from '../controllers/expert/get-expert';
 import {AllExperts} from '../controllers/expert/all-experts';
 import {paramUserIdField} from "../controllers/helper";
 import { logger } from '../logger';
+import { GetProfile } from '../controllers/profile/get';
+import { PutProfile } from '../controllers/profile/put';
 const router = express.Router();
 
-export class ExpertsRouter extends BaseRouter implements IRouter {
+export class ProfileRouter extends BaseRouter implements IRouter {
   constructor() {
     super();
   }
 
   public router(): Router {
-    router.get(``, ...this.handlerRunner(new AllExperts()));
-    router.get(`/:${paramUserIdField}`, ...this.handlerRunner(new GetExpertById()));
+    router.get(`/`, ...this.handlerRunner(new GetProfile()));
+    router.put(`/`, ...this.handlerRunner(new PutProfile()));
 
     router.use((exception, req, res, next) => {
-      logger.error(`Expert router error, method: ${req.url}, exception: ${exception}`);
+      logger.error(`Profile router error, method: ${req.url}, exception: ${exception}`);
       renderException(req, res, exception);
       next();
     });

@@ -23,22 +23,22 @@ export class RefreshToken extends Controller implements IController {
     if (!expert) {
       throw new NotFoundError(`Expert '${expert.id}' not found`);
     }
-    const decodedRefreshToken = await tokenGenerator.verifyToken(req.body.refreshToken);
-    if (expert.refreshTokenMap[decodedRefreshToken['jwtid']]) {
-      delete expert.refreshTokenMap[req.body.refreshToken];
-      const preparedExpert = UserStore.prepareUser(expert);
-      const newAccessToken = await tokenGenerator.makeAccessToken(preparedExpert);
-      const [newRefreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(preparedExpert);
-      expert.refreshTokenMap = {
-        ...expert.refreshTokenMap,
-        [refreshUuid]: newRefreshToken
-      };
-      await expert.save();
-      renderDataSuccess(req, res, {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken
-      });
-    }
+    // const decodedRefreshToken = await tokenGenerator.verifyToken(req.body.refreshToken);
+    // if (expert.refreshTokenMap[decodedRefreshToken['jwtid']]) {
+    //   delete expert.refreshTokenMap[req.body.refreshToken];
+    //   const preparedExpert = UserStore.prepareUser(expert);
+    //   const newAccessToken = await tokenGenerator.makeAccessToken(preparedExpert);
+    //   const [newRefreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(preparedExpert);
+    //   expert.refreshTokenMap = {
+    //     ...expert.refreshTokenMap,
+    //     [refreshUuid]: newRefreshToken
+    //   };
+    //   await expert.save();
+    //   renderDataSuccess(req, res, {
+    //     accessToken: newAccessToken,
+    //     refreshToken: newRefreshToken
+    //   });
+    // }
     next();
   }
 }

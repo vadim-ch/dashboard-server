@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   OneToOne,
-  BeforeUpdate, AfterLoad,
+  BeforeUpdate, AfterLoad, JoinColumn,
 } from 'typeorm';
 import { compare, hash } from 'bcrypt';
 import { Client } from './client/Client';
@@ -40,11 +40,15 @@ export class User {
   @Column({type: 'enum', enum: UserRole})
   role: UserRole;
 
-  @OneToOne(type => Expert, expert => expert.user)
-  expert: Expert;
+  @Column({ nullable: true })
+  profileId: number;
 
-  @OneToOne(type => Client, client => client.user)
-  client: Client;
+  @OneToOne(type => Expert || Client)
+  @JoinColumn()
+  profile: Expert | Client;
+
+  // @OneToOne(type => Client, client => client.user)
+  // client: Client;
 
   @Column({type: 'hstore', nullable: true})
   refreshTokenMap: object;

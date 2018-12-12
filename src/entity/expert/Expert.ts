@@ -46,9 +46,8 @@ export class Expert {
   @Column({nullable: true})
   userId: string;
 
-  @OneToOne(type => User, user => user.expert)
-  @JoinColumn()
-  user: User;
+  // @OneToOne(type => User, user => user.profile)
+  // user: User;
 
   @CreateDateColumn()
   createdDate: Date;

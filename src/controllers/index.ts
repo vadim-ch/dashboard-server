@@ -36,8 +36,8 @@ export class Controller {
         getToken: function fromHeaderOrCookie(req) {
           if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
             return req.headers.authorization.split(' ')[1];
-          } else if(req.cookies && req.cookies.id_token) {
-            return req.cookies.id_token;
+          } else if(req.cookies && req.cookies.at) {
+            return req.cookies.at;
           }
           return null;
         }

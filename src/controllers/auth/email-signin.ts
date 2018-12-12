@@ -6,7 +6,7 @@ import { EMAIL_SIGNIN_SECRET } from '../../util/env-vars';
 import {tokenGenerator} from '../../util/token-generator';
 import {userStore} from '../../store/user';
 import {loginHandler} from '../helper';
-import {UserRole} from '../../entity/User';
+import { User, UserRole } from '../../entity/User';
 import { NotOwnedError } from '../../errors/no-owned-error';
 
 export class EmailSignin extends Controller implements IController {
@@ -32,7 +32,7 @@ export class EmailSignin extends Controller implements IController {
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const user = req.user;
     const existUser = await userStore.getByEmail(user.email);
-    let result;
+    let result: User;
     if (existUser) {
       // result = await userStore.findAndUpdate(existUser.id, {role: UserRole.Expert})
       // тут не хватает создания записи в таблице expert
@@ -49,7 +49,7 @@ export class EmailSignin extends Controller implements IController {
       }
     }
 
-    const accessToken = await tokenGenerator.makeAccessToken({...result, profileId: result.expertId});
+    const accessToken = await tokenGenerator.makeAccessToken(result);
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(result);
     await userStore.addRefreshToken(result.id, refreshUuid, refreshToken);
     req.login(user, {session: false}, loginHandler(req, res, next, accessToken, refreshToken));

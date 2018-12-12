@@ -21,14 +21,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage}); // TODO добавить валидацию файлов
 
-export class PutExpertById extends Controller implements IController {
+export class PutProfile extends Controller implements IController {
   public beforeRequest: Array<any> = [
     upload.single('avatar')
   ];
 
-  public validateRules: Array<any> = [
-    param(paramUserIdField).isString().isLength({min: 5}),
-  ];
+  public validateRules: Array<any> = [];
 
   constructor() {
     super(SESSION_SECRET);
@@ -36,7 +34,7 @@ export class PutExpertById extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const authUserId = req.user.sub;
-    const {expertId} = req.params;
+    const expertId = req.user.profileId;
     const requestData = req.body;
     let updateData: any = {};
     if (requestData.firstName) {

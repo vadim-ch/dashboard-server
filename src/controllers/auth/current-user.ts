@@ -27,7 +27,6 @@ export class GetCurrentUser extends Controller implements IController {
     // const user = await expertsStore.getUserById(userId);
     // рабочий вариант. разница в том что делается join
     // const expert = await expertsStore.getExpertByUserId(authUserId);
-    console.error(req.user);
     renderDataSuccess(req, res, {
       userId,
       email,

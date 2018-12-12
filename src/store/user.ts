@@ -52,12 +52,11 @@ export class UserStore extends MainStore<User> {
     return UserStore.prepareUser(user);
   }
 
-  public async createNewExpert(data: NewUserType, expertData?: NewExpertType): Promise<UserType> {
+  public async createNewExpert(data: NewUserType, expertData?: NewExpertType): Promise<User> {
     const user = await this.createNew(data, UserRole.Expert);
-    const expert = await expertsStore.createNew(expertData);
-    user.expert = expert;
+    user.profile = await expertsStore.createNew(expertData);
     await this.repository.save(user);
-    return UserStore.prepareUser(user, expert.id);
+    return user;
   }
 
   public async addRefreshToken(userId: string, refreshId: string, refreshToken: string): Promise<UpdateResult> {

@@ -26,7 +26,7 @@ export const JwtRefreshOptions = {
 export type UserEntityType = {
   id: string;
   role: UserRole;
-  profileId: string;
+  profileId: number;
   email: string;
 }
 

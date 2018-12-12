@@ -5,6 +5,7 @@ import { routerInit } from './routes';
 import { CLIENT_URL, isProduction } from './util/env-vars';
 import * as cors from 'cors'
 import * as bodyParser from 'body-parser'
+import * as cookieParser from 'cookie-parser'
 
 // API keys and Passport configuration
 import('./passport');
@@ -31,6 +32,7 @@ class App {
     this.express.use(morgan('combined'));
     this.express.use(bodyParser.urlencoded({extended: true}));
     this.express.use(bodyParser.json());
+    this.express.use(cookieParser());
     // this.securityRun();
     this.mountRoutes();
   }
