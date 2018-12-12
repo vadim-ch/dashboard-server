@@ -80,4 +80,8 @@ export class User {
       this.password = await hash(this.password, 12);
     }
   }
+
+  public async isPasswordExist() {
+    return Boolean(this.password);
+  }
 }

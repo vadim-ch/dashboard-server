@@ -29,7 +29,8 @@ export class Signin extends Controller implements IController {
         const accessToken = await tokenGenerator.makeAccessToken(user);
         const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(user);
         await userStore.addRefreshToken(user.id, refreshUuid, refreshToken);
-        req.login(user, {session: false}, loginHandler(req, res, next, accessToken, refreshToken));
+        const isPasswordExist = await user.isPasswordExist();
+        req.login(user, {session: false}, loginHandler(req, res, next, accessToken, refreshToken, isPasswordExist));
       }
     })(req, res, next);
   }

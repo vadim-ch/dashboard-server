@@ -41,6 +41,7 @@ export class Signup extends Controller implements IController {
     const accessToken = await tokenGenerator.makeAccessToken(rawUser as any); // добавить profileId
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(rawUser as any);
     await userStore.addRefreshToken(rawUser.id, refreshUuid, refreshToken);
-    req.login(rawUser, {session: false}, loginHandler(req, res, next, accessToken, refreshToken));
+    const isPasswordExist = await rawUser.isPasswordExist();
+    req.login(rawUser, {session: false}, loginHandler(req, res, next, accessToken, refreshToken, isPasswordExist));
   }
 }

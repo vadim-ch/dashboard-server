@@ -5,6 +5,7 @@ import { param } from 'express-validator/check';
 import { expertsStore } from '../../store/expert';
 import { paramUserIdField } from '../helper';
 import { SESSION_SECRET } from '../../util/env-vars';
+import { userStore } from '../../store/user';
 
 export class GetProfile extends Controller implements IController {
   public validateRules: Array<any> = [];
@@ -17,6 +18,10 @@ export class GetProfile extends Controller implements IController {
     const authUserId = req.user.sub;
     const expertId = req.user.profileId;
     const expert = await expertsStore.getExpert(expertId);
-    renderDataSuccess(req, res, expert);
+    const user = await userStore.getById(authUserId);
+
+    renderDataSuccess(req, res, {
+      ...expert
+    });
   }
 }

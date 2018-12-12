@@ -52,6 +52,7 @@ export class EmailSignin extends Controller implements IController {
     const accessToken = await tokenGenerator.makeAccessToken(result);
     const [refreshToken, refreshUuid] = await tokenGenerator.makeRefreshToken(result);
     await userStore.addRefreshToken(result.id, refreshUuid, refreshToken);
-    req.login(user, {session: false}, loginHandler(req, res, next, accessToken, refreshToken));
+    const isPasswordExist = await result.isPasswordExist();
+    req.login(user, {session: false}, loginHandler(req, res, next, accessToken, refreshToken, isPasswordExist));
   }
 }

@@ -31,9 +31,8 @@ export class UserStore extends MainStore<User> {
     }
   }
 
-  public async getById(id: string): Promise<UserType> {
-    const user = await this.repository.findOne(id);
-    return UserStore.prepareUser(user);
+  public async getById(id: string): Promise<User> {
+    return await this.repository.findOne(id);
   }
 
   public async getByEmail(email: string): Promise<User> {
@@ -44,12 +43,12 @@ export class UserStore extends MainStore<User> {
     return await this.repository.findOne(userId, {relations: ['expert']});
   }
 
-  public async createNewClient(data: NewUserType, clientData?: NewExpertType): Promise<UserType> {
+  public async createNewClient(data: NewUserType, clientData?: NewExpertType): Promise<User> {
     const user = await this.createNew(data);
     // const expert = await expertsStore.createNew(expertData);
     // user.expert = expert;
     // await this.repository.save(user);
-    return UserStore.prepareUser(user);
+    return user;
   }
 
   public async createNewExpert(data: NewUserType, expertData?: NewExpertType): Promise<User> {
