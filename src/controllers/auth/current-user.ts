@@ -4,6 +4,7 @@ import { renderDataSuccess } from '../../util/data-render';
 import { SESSION_SECRET } from '../../util/env-vars';
 import { UserRole } from '../../entity/User';
 import * as expressJwtPermissions from 'express-jwt-permissions'
+import { userStore } from '../../store/user';
 
 const guard = expressJwtPermissions();
 
@@ -23,15 +24,15 @@ export class GetCurrentUser extends Controller implements IController {
 
   public async run(req: Request, res: Response, next: (data?: any) => void) {
     const userId = req.user ? req.user.sub : null;
-    const {email, expertId, role} = req.user;
-    // const user = await expertsStore.getUserById(userId);
-    // рабочий вариант. разница в том что делается join
-    // const expert = await expertsStore.getExpertByUserId(authUserId);
+    const {email, profileId, role} = req.user;
+    const user = await userStore.getById(userId);
+    const isPasswordExist = await user.isPasswordExist();
     renderDataSuccess(req, res, {
       userId,
       email,
-      expertId,
-      role
+      profileId,
+      role,
+      isPasswordExist
     });
   }
 }

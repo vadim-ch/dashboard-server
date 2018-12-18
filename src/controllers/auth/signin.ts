@@ -3,16 +3,14 @@ import { Request, Response } from 'express';
 import { check } from 'express-validator/check';
 import { loginHandler } from '../helper';
 import { userAuth } from '../../passport';
-import { expertsStore } from '../../store/expert';
 import { tokenGenerator } from '../../util/token-generator';
 import { userStore } from '../../store/user';
-import { CLIENT_URL } from '../../util/env-vars';
 
 export class Signin extends Controller implements IController {
   public validateRules: Array<any> = [
     check('email').isEmail(),
     // password must be at least 5 chars long
-    check('password').isLength({min: 5}),
+    check('password').isLength({min: 6}),
   ];
 
   constructor() {
